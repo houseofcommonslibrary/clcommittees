@@ -1,16 +1,28 @@
 Package: clcommittees
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Tools for downloading and processing data from the UK Parliament's 
+    Committees Information System API
+Version: 0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(
+        given = "Oliver",
+        family = "Hawkins",
+        role = c("aut", "cre"),
+        email = "oli@olihawkins.com")
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: BSD_3_clause + file LICENSE
 Encoding: UTF-8
+Imports:
+    dplyr,
+    httr,
+    janitor,
+    jsonlite,
+    magrittr,
+    purrr,
+    rlang,
+    stringr,
+    tibble
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat
