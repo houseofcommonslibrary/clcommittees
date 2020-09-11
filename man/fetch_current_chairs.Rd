@@ -4,15 +4,12 @@
 \alias{fetch_current_chairs}
 \title{Fetch data on the current chairs of committees as a tibble}
 \usage{
-fetch_current_chairs(committees = NULL, current = FALSE, summary = TRUE)
+fetch_current_chairs(committees = NULL, summary = TRUE)
 }
 \arguments{
 \item{committees}{A vector of committee ids specifying the committees for
 which to return chairs. The default is NULL, which returns data on the
 chairs of all committees.}
-
-\item{current}{A boolean indicating whether to return chairs for only
-those committees without an end date. The default is FALSE.}
 
 \item{summary}{A boolean indicating whether to return the summary columns or
 the the full table. The default is TRUE.}
