@@ -2,17 +2,16 @@
 % Please edit documentation in R/memberships.R
 \name{process_roles}
 \alias{process_roles}
-\title{Processes the full table returned from a \code{get_x_members} function to
-exract the data on roles.}
+\title{Processes the full table returned from \code{fetch_members} or
+\code{fetch_memberships_for} to exract the data on roles.}
 \usage{
 process_roles(roles)
 }
 \arguments{
-\item{roles}{A tibble returned from a \code{get_x_members} function called
-with \code{summary = FALSE}.}
+\item{roles}{A tibble returned from \code{fetch_members} or
+\code{fetch_memberships_for} called with \code{summary = FALSE}.}
 }
 \description{
-Processes the full table returned from a \code{get_x_members} function to
-exract the data on roles.
+Processes the full table returned from \code{fetch_members} or
+\code{fetch_memberships_for} to exract the data on roles.
 }
-\keyword{internal}

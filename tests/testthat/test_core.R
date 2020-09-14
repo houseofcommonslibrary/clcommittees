@@ -59,12 +59,3 @@ test_that("request_items requests and extracts item data correctly", {
             expect_identical(observed, expected)
         })
 })
-
-test_that("request_items warns when URLs don't specify parameters.all=true", {
-    with_mock(
-        "httr::GET" = get_mock_get(request_get), {
-            expect_warning(
-                request_items(stringr::str_sub(url, 1, 47)),
-                "Calling request_items without requesting ")
-        })
-})

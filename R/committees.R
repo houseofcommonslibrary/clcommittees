@@ -1,23 +1,21 @@
 ### Functions for fetching data from the committees endpoint
 
-#' Fetch data on all committees as a tibble
+# Committees ------------------------------------------------------------------
+
+#' Fetch data on current and former committees as a tibble
 #'
-#' \code{fetch_committees} fetches data on all committees and returns it as a
-#' tibble containing one row per committee.
+#' \code{fetch_committees} fetches data on current and former committees and
+#' returns it as a tibble containing one row per committee.
 #'
 #' By default this function returns a subset of the columns and ignores any
 #' nested and redundant columns. Set \code{summary = FALSE} when calling the
 #' function to retrieve the full data.
 #'
-#' @param current A boolean indicating whether to return only the committees
-#'   without an end date. The default is FALSE.
 #' @param summary A boolean indicating whether to return the summary columns or
 #'   the the full table. The default is TRUE.
 #' @export
 
-fetch_committees <- function(
-    current = FALSE,
-    summary = TRUE) {
+fetch_committees <- function(summary = TRUE) {
 
     # Get data for all committees
     url <- stringr::str_c(
@@ -52,13 +50,48 @@ fetch_committees <- function(
             .data$category_name)
     }
 
-    # Remove old committees if requested
-    if (current == TRUE) {
-        cm <- cm %>% dplyr::filter(is.na(.data$end_date))
-    }
-
     cm
 }
+
+#' Fetch data on current committees as a tibble
+#'
+#' \code{fetch_current_committees} fetches data on current committees and
+#' returns it as a tibble containing one row per committee. Current committees
+#' are those that do not have an end date.
+#'
+#' By default this function returns a subset of the columns and ignores any
+#' nested and redundant columns. Set \code{summary = FALSE} when calling the
+#' function to retrieve the full data.
+#'
+#' @param summary A boolean indicating whether to return the summary columns or
+#'   the the full table. The default is TRUE.
+#' @export
+
+fetch_current_committees <- function(summary = TRUE) {
+    cm <- fetch_committees(summary = summary)
+    cm <- cm %>% dplyr::filter(is.na(.data$end_date))
+}
+
+#' Fetch data on former committees as a tibble
+#'
+#' \code{fetch_former_committees} fetches data on foremr committees and
+#' returns it as a tibble containing one row per committee. Former committees
+#' are those that have an end date.
+#'
+#' By default this function returns a subset of the columns and ignores any
+#' nested and redundant columns. Set \code{summary = FALSE} when calling the
+#' function to retrieve the full data.
+#'
+#' @param summary A boolean indicating whether to return the summary columns or
+#'   the the full table. The default is TRUE.
+#' @export
+
+fetch_former_committees <- function(summary = TRUE) {
+    cm <- fetch_committees(summary = summary)
+    cm <- cm %>% dplyr::filter(! is.na(.data$end_date))
+}
+
+# Sub-committees ------------------------------------------------------------------
 
 #' Fetch data on the subcommittees of parent committees as a tibble
 #'
@@ -80,16 +113,12 @@ fetch_committees <- function(
 #' @param committees A vector of committee ids specifying the parent committees
 #'   for which to return any subcommittees. The default is NULL, which returns
 #'   data on subcommittees for all parent committees.
-#' @param current A boolean indicating whether to return subcommittees for only
-#'   those parent committees without an end date. The default is FALSE.
 #' @export
 
-fetch_sub_committees <- function(
-    committees = NULL,
-    current = FALSE) {
+fetch_sub_committees <- function(committees = NULL) {
 
     # Fetch the full data on committees
-    cm <- fetch_committees(summary = FALSE, current = current)
+    cm <- fetch_committees(summary = FALSE)
 
     # Extract the subcommittees table from the list column and bind rows
     sc <- purrr::pmap_df(
@@ -120,7 +149,7 @@ fetch_sub_committees <- function(
             dplyr::everything()) %>%
         tibble::as_tibble()
 
-    # Filter for just the sepcified committee ids
+    # Filter for just the specified committee ids
     if (! is.null(committees)) {
         sc <- sc %>% dplyr::filter(.data$committee_id %in% committees)
     }
@@ -142,16 +171,12 @@ fetch_sub_committees <- function(
 #' @param committees A vector of committee ids specifying the committees for
 #'   which to return chairs. The default is NULL, which returns data on the
 #'   chairs of all committees.
-#' @param current A boolean indicating whether to return chairs for only
-#'   those committees without an end date. The default is FALSE.
 #' @export
 
-fetch_committee_types <- function(
-    committees = NULL,
-    current = FALSE) {
+fetch_committee_types <- function(committees = NULL) {
 
     # Fetch the full data on committees
-    cm <- fetch_committees(summary = FALSE, current = current)
+    cm <- fetch_committees(summary = FALSE)
 
     # Extract the subcommittees table from the list column and bind rows
     ct <- purrr::pmap_df(
@@ -181,7 +206,7 @@ fetch_committee_types <- function(
             dplyr::everything()) %>%
         tibble::as_tibble()
 
-    # Filter for just the sepcified committee ids
+    # Filter for just the specified committee ids
     if (! is.null(committees)) {
         ct <- ct %>% dplyr::filter(.data$committee_id %in% committees)
     }
@@ -216,7 +241,7 @@ fetch_current_chairs <- function(
     summary = TRUE) {
 
     # Fetch the full data on committees
-    cm <- fetch_committees(summary = FALSE, current = TRUE)
+    cm <- fetch_committees(summary = FALSE)
 
     # Extract the subcommittees table from the list column and bind rows
     ch <- purrr::map2_df(

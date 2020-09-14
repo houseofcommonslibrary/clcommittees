@@ -12,8 +12,7 @@ request_items(url)
 \description{
 \code{request_items} makes an API call to the given endpoint, extracts
 the data items from the response as a tibble, and cleans the column names.
-This function is intended to be used with API requests that ask for all
-the available items with \code{?parameters.all=true}. Do not use this
-function if you need to access any of the other properties of the response
-object; call \code{request} and \code{get_response_items} separately.
+Do not use this function if you need to access any of the other properties
+of the response object; call \code{request} and \code{get_response_items}
+separately.
 }

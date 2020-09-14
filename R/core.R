@@ -36,23 +36,13 @@ get_response_items <- function(response) {
 #'
 #' \code{request_items} makes an API call to the given endpoint, extracts
 #' the data items from the response as a tibble, and cleans the column names.
-#' This function is intended to be used with API requests that ask for all
-#' the available items with \code{?parameters.all=true}. Do not use this
-#' function if you need to access any of the other properties of the response
-#' object; call \code{request} and \code{get_response_items} separately.
+#' Do not use this function if you need to access any of the other properties
+#' of the response object; call \code{request} and \code{get_response_items}
+#' separately.
 #'
 #' @param url The full API URL specifying the endpoint and request parameters.
 #' @export
 
 request_items <- function(url) {
-
-    # Warn if the url does not request all items
-    if (! stringr::str_detect(url, "\\?parameters.all=true")) {
-        warning(stringr::str_c(
-            "Calling request_items without requesting all the items in a ",
-            "dataset using 'parameters.all=true' means you may be missing ",
-            "some items. Are you sure you have all the data you expect?"))
-    }
-
     get_response_items(request(url))
 }

@@ -4,15 +4,12 @@
 \alias{fetch_committee_types}
 \title{Fetch data on the types of committees as a tibble}
 \usage{
-fetch_committee_types(committees = NULL, current = FALSE)
+fetch_committee_types(committees = NULL)
 }
 \arguments{
 \item{committees}{A vector of committee ids specifying the committees for
 which to return chairs. The default is NULL, which returns data on the
 chairs of all committees.}
-
-\item{current}{A boolean indicating whether to return chairs for only
-those committees without an end date. The default is FALSE.}
 }
 \description{
 \code{fetch_types} fetches data on the types of comittees and returns it as

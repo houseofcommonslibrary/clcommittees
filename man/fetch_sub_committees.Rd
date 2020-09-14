@@ -4,15 +4,12 @@
 \alias{fetch_sub_committees}
 \title{Fetch data on the subcommittees of parent committees as a tibble}
 \usage{
-fetch_sub_committees(committees = NULL, current = FALSE)
+fetch_sub_committees(committees = NULL)
 }
 \arguments{
 \item{committees}{A vector of committee ids specifying the parent committees
 for which to return any subcommittees. The default is NULL, which returns
 data on subcommittees for all parent committees.}
-
-\item{current}{A boolean indicating whether to return subcommittees for only
-those parent committees without an end date. The default is FALSE.}
 }
 \description{
 \code{fetch_sub_committees} fetches data on the subcommittees of parent
