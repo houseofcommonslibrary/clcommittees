@@ -2,7 +2,8 @@
 
 # General membership functions ------------------------------------------------
 
-#' Processes the data returned from a request to the membership endpoints.
+#' Processes a tibble returned from \code{request_items} when called with the
+#' url of either the member or membership endpoint.
 #'
 #' @param memberships A tibble returned from \code{request_items} called with
 #'   the membership/member endpoint as the url.
@@ -11,6 +12,8 @@
 #' @keywords internal
 
 process_memberships <- function(memberships, summary = TRUE) {
+
+    if (nrow(memberships) == 0) return(memberships)
 
     # Select only a subset of columns if requested
     if (summary == TRUE) {
@@ -40,12 +43,12 @@ process_memberships <- function(memberships, summary = TRUE) {
 
 #' Fetch data on the current and former members of a committee as a tibble
 #'
-#' \code{fetch_members} fetches data on the current and former members of a
+#' \code{fetch_memberships} fetches data on the current and former members of a
 #' given committee and returns it as a tibble containing one row per committee
-#' member.
+#' membership.
 #'
 #' @param committee An integer representing the id of the committee for which
-#'   to fetch the current and former members.
+#'   to fetch the current and former memberships.
 #' @param summary A boolean indicating whether to return the summary columns or
 #'   the full table. The default is TRUE.
 #' @export
@@ -61,12 +64,12 @@ fetch_memberships <- function(
 
 #' Fetch data on the current members of a committee as a tibble
 #'
-#' \code{fetch_current_members} fetches data on the current members of a given
-#' committee and returns it as a tibble containing one row per committee
-#' member.
+#' \code{fetch_current_memberships} fetches data on the current members of a
+#' given committee and returns it as a tibble containing one row per committee
+#' membership.
 #'
 #' @param committee An integer representing the id of the committee for which
-#'   to fetch the current members.
+#'   to fetch the current memberships.
 #' @param summary A boolean indicating whether to return the summary columns or
 #'   the full table. The default is TRUE.
 #' @export
@@ -81,7 +84,10 @@ fetch_current_memberships <- function(
         "parameters.all=true"
     ))
 
-    memberships <- request_items(url) %>%
+    memberships <- request_items(url)
+    if (nrow(memberships) == 0) return(memberships)
+
+    memberships <-  memberships %>%
         # Rename the id and name columns to be informative
         dplyr::rename(membership_id = .data$id)
 
@@ -91,12 +97,12 @@ fetch_current_memberships <- function(
 
 #' Fetch data on the former members of a committee as a tibble
 #'
-#' \code{fetch_former_members} fetches data on the former members of a given
-#' committee and returns it as a tibble containing one row per committee
-#' member.
+#' \code{fetch_former_memberships} fetches data on the former members of a
+#' given committee and returns it as a tibble containing one row per committee
+#' membership.
 #'
 #' @param committee An integer representing the id of the committee for which
-#'   to fetch the former members.
+#'   to fetch the former memberships.
 #' @param summary A boolean indicating whether to return the summary columns or
 #'   the full table. The default is TRUE.
 #' @export
@@ -111,7 +117,10 @@ fetch_former_memberships <- function(
         "parameters.all=true"
     ))
 
-    memberships <- request_items(url) %>%
+    memberships <- request_items(url)
+    if (nrow(memberships) == 0) return(memberships)
+
+    memberships <-  memberships %>%
         # Rename the id and name columns to be informative
         dplyr::rename(membership_id = .data$id)
 
@@ -120,7 +129,21 @@ fetch_former_memberships <- function(
 
 # Fetch memberships for functions ---------------------------------------------
 
-fetch_memberships_for <- function(member, summary = TRUE) {
+#' Fetch data on the current and former committee memberships of a given member
+#'
+#' \code{fetch_memberships_for_member} fetches data on the current and former
+#' committee memberships of a given member and returns it as a tibble
+#' containing one row per committee membership.
+#'
+#' @param member An integer representing the mnis_id of the member for which
+#'   to fetch the current and former memberships.
+#' @param summary A boolean indicating whether to return the summary columns or
+#'   the full table. The default is TRUE.
+#' @export
+
+fetch_memberships_for_member <- function(
+    member,
+    summary = TRUE) {
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -132,7 +155,21 @@ fetch_memberships_for <- function(member, summary = TRUE) {
     process_memberships(memberships, summary)
 }
 
-fetch_current_memberships_for <- function(member, summary = TRUE) {
+#' Fetch data on the current committee memberships of a given member
+#'
+#' \code{fetch_current_memberships_for_member} fetches data on the current
+#' committee memberships of a given member and returns it as a tibble
+#' containing one row per committee membership.
+#'
+#' @param member An integer representing the mnis_id of the member for which
+#'   to fetch the current memberships.
+#' @param summary A boolean indicating whether to return the summary columns or
+#'   the full table. The default is TRUE.
+#' @export
+
+fetch_current_memberships_for_member <- function(
+    member,
+    summary = TRUE) {
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -144,7 +181,21 @@ fetch_current_memberships_for <- function(member, summary = TRUE) {
     process_memberships(memberships, summary)
 }
 
-fetch_former_memberships_for <- function(member, summary = TRUE) {
+#' Fetch data on the current committee memberships of a given member
+#'
+#' \code{fetch_former_memberships_for_member} fetches data on the former
+#' committee memberships of a given member and returns it as a tibble
+#' containing one row per committee membership.
+#'
+#' @param member An integer representing the mnis_id of the member for which
+#'   to fetch the former memberships.
+#' @param summary A boolean indicating whether to return the summary columns or
+#'   the full table. The default is TRUE.
+#' @export
+
+fetch_former_memberships_for_member <- function(
+    member,
+    summary = TRUE) {
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -159,13 +210,15 @@ fetch_former_memberships_for <- function(member, summary = TRUE) {
 # General roles functions -----------------------------------------------------
 
 #' Processes the full table returned from \code{fetch_members} or
-#'   \code{fetch_memberships_for} to exract the data on roles.
+#'   \code{fetch_memberships_for_member} to extract the data on roles.
 #'
 #' @param roles A tibble returned from \code{fetch_members} or
-#'   \code{fetch_memberships_for} called with \code{summary = FALSE}.
-#' @export
+#'   \code{fetch_memberships_for_member} called with \code{summary = FALSE}.
+#' @keywords internal
 
 process_roles <- function(roles) {
+
+    if (nrow(roles) == 0) return(roles)
 
     roles <- purrr::pmap_df(
         list(
@@ -222,7 +275,7 @@ process_roles <- function(roles) {
 #' current and former members. A role without an end date is a current role.
 #'
 #' A member may have concurrent roles for the same period reflecting different
-#' roles e.g. one indicating their service as a member and another their
+#' positions e.g. one indicating their service as a member and another their
 #' service as a chair.
 #'
 #' @param committee An integer representing the id of the committee for which
@@ -279,19 +332,71 @@ fetch_former_roles <- function(committee) {
     process_roles(former_members)
 }
 
-# Fetch roles for functions ---------------------------------------------------
+# Fetch roles for member functions ---------------------------------------------------
 
-fetch_roles_for <- function(member) {
-    member <- fetch_memberships_for(member, summary = FALSE)
+#' Fetch data on the current and former committee roles of a given member
+#'
+#' \code{fetch_roles_for_member} fetches data on the current and former
+#' committee roles of a given member and returns it as a tibble containing one
+#' row per committee role.
+#'
+#' A role indicates a period of service in a given position, so this function
+#' returns ALL the roles for this member (both current and historic). A role
+#' without an end date is a current role.
+#'
+#' A member may have concurrent roles for the same period reflecting different
+#' positions e.g. one indicating their service as a member and another their
+#' service as a chair.
+#'
+#' @param member An integer representing the mnis_id of the member for which to
+#'   fetch the current and former roles.
+#' @export
+
+fetch_roles_for_member <- function(member) {
+    member <- fetch_memberships_for_member(member, summary = FALSE)
     process_roles(member)
 }
 
-fetch_current_roles_for <- function(member) {
-    member <- fetch_current_memberships_for(member, summary = FALSE)
+#' Fetch data on the current committee roles of a given member
+#'
+#' \code{fetch_current_roles_for_member} fetches data on the current committee
+#' roles of a given member and returns it as a tibble containing one row per
+#' committee role.
+#'
+#' A role indicates a period of service in a given position, so this function
+#' returns the current roles for this member (both current and historic).
+#'
+#' A member may have concurrent roles for the same period reflecting different
+#' positions e.g. one indicating their service as a member and another their
+#' service as a chair.
+#'
+#' @param member An integer representing the mnis_id of the member for which to
+#'   fetch the current roles.
+#' @export
+
+fetch_current_roles_for_member <- function(member) {
+    member <- fetch_current_memberships_for_member(member, summary = FALSE)
     process_roles(member)
 }
 
-fetch_former_roles_for <- function(member) {
-    member <- fetch_former_memberships_for(member, summary = FALSE)
+#' Fetch data on the current committee roles of a given member
+#'
+#' \code{fetch_former_roles_for_member} fetches data on the current committee
+#' roles of a given member and returns it as a tibble containing one row per
+#' committee role.
+#'
+#' A role indicates a period of service in a given position, so this function
+#' returns the current roles for this member (both current and historic).
+#'
+#' A member may have concurrent roles for the same period reflecting different
+#' positions e.g. one indicating their service as a member and another their
+#' service as a chair.
+#'
+#' @param member An integer representing the mnis_id of the member for which to
+#'   fetch the current roles.
+#' @export
+
+fetch_former_roles_for_member <- function(member) {
+    member <- fetch_former_memberships_for_member(member, summary = FALSE)
     process_roles(member)
 }

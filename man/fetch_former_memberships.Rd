@@ -8,13 +8,13 @@ fetch_former_memberships(committee, summary = TRUE)
 }
 \arguments{
 \item{committee}{An integer representing the id of the committee for which
-to fetch the former members.}
+to fetch the former memberships.}
 
 \item{summary}{A boolean indicating whether to return the summary columns or
 the full table. The default is TRUE.}
 }
 \description{
-\code{fetch_former_members} fetches data on the former members of a given
-committee and returns it as a tibble containing one row per committee
-member.
+\code{fetch_former_memberships} fetches data on the former members of a
+given committee and returns it as a tibble containing one row per committee
+membership.
 }

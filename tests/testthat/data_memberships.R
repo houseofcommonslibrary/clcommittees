@@ -32,42 +32,142 @@ fetch_memberships_data <- function() {
         "parameters.all=true"
     ))
 
+    url_for_member <- stringr::str_glue(stringr::str_c(
+        "https://committees-api.parliament.uk/",
+        "committees/membership/member?",
+        "parameters.members={MEMBER_ID}"
+    ))
+
+    url_current_for_member <- stringr::str_glue(stringr::str_c(
+        "https://committees-api.parliament.uk/",
+        "committees/membership/member?",
+        "parameters.former=false&parameters.members={MEMBER_ID}"
+    ))
+
+    url_former_for_member <- stringr::str_glue(stringr::str_c(
+        "https://committees-api.parliament.uk/",
+        "committees/membership/member?",
+        "parameters.former=true&parameters.members={MEMBER_ID}"
+    ))
+
     # Fetch data
-    fetch_current_memberships_get <- httr::GET(url_current)
-    fetch_former_memberships_get <- httr::GET(url_former)
+    fetch_current_memberships_get <-
+        httr::GET(url_current)
+    fetch_former_memberships_get <-
+        httr::GET(url_former)
 
-    fetch_memberships_output <- fetch_memberships(COMMITTEE_ID)
-    fetch_memberships_output_summary <- fetch_memberships(
-        COMMITTEE_ID, summary = FALSE)
+    fetch_memberships_output <-
+        fetch_memberships(COMMITTEE_ID)
+    fetch_memberships_output_summary <-
+        fetch_memberships(COMMITTEE_ID, summary = FALSE)
 
-    fetch_current_memberships_output <- fetch_current_memberships(COMMITTEE_ID)
-    fetch_current_memberships_output_summary <- fetch_current_memberships(
-        COMMITTEE_ID, summary = FALSE)
+    fetch_current_memberships_output <-
+        fetch_current_memberships(COMMITTEE_ID)
+    fetch_current_memberships_output_summary <-
+        fetch_current_memberships(COMMITTEE_ID, summary = FALSE)
 
-    fetch_former_memberships_output <- fetch_former_memberships(COMMITTEE_ID)
-    fetch_former_memberships_output_summary <- fetch_former_memberships(
-        COMMITTEE_ID, summary = FALSE)
+    fetch_former_memberships_output <-
+        fetch_former_memberships(COMMITTEE_ID)
+    fetch_former_memberships_output_summary <-
+        fetch_former_memberships(COMMITTEE_ID, summary = FALSE)
 
-    fetch_current_roles_output <- fetch_current_roles(COMMITTEE_ID)
-    fetch_former_roles_output <- fetch_former_roles(COMMITTEE_ID)
-    fetch_roles_output <- fetch_roles(COMMITTEE_ID)
+    fetch_memberships_for_member_get <-
+        httr::GET(url_for_member)
+    fetch_current_memberships_for_member_get <-
+        httr::GET(url_current_for_member)
+    fetch_former_memberships_for_member_get <-
+        httr::GET(url_former_for_member)
+
+    fetch_memberships_for_member_output <-
+        fetch_memberships_for_member(MEMBER_ID)
+    fetch_memberships_for_member_output_summary <-
+        fetch_memberships_for_member(MEMBER_ID, summary = FALSE)
+
+    fetch_current_memberships_for_member_output <-
+        fetch_current_memberships_for_member(MEMBER_ID)
+    fetch_current_memberships_for_member_output_summary <-
+        fetch_current_memberships_for_member(MEMBER_ID, summary = FALSE)
+
+    fetch_former_memberships_for_member_output <-
+        fetch_former_memberships_for_member(MEMBER_ID)
+    fetch_former_memberships_for_member_output_summary <-
+        fetch_former_memberships_for_member(MEMBER_ID, summary = FALSE)
+
+    fetch_roles_output <-
+        fetch_roles(COMMITTEE_ID)
+    fetch_current_roles_output <-
+        fetch_current_roles(COMMITTEE_ID)
+    fetch_former_roles_output <-
+        fetch_former_roles(COMMITTEE_ID)
+
+    fetch_roles_for_member_output <-
+        fetch_roles_for_member(MEMBER_ID)
+    fetch_current_roles_for_member_output <-
+        fetch_current_roles_for_member(MEMBER_ID)
+    fetch_former_roles_for_member_output <-
+        fetch_former_roles_for_member(MEMBER_ID)
 
     # Write data
-    write_data(fetch_current_memberships_get, "fetch_current_memberships_get")
-    write_data(fetch_former_memberships_get, "fetch_former_memberships_get")
+    write_data(fetch_current_memberships_get,
+        "fetch_current_memberships_get")
+    write_data(fetch_former_memberships_get,
+        "fetch_former_memberships_get")
 
-    write_data(fetch_memberships_output, "fetch_memberships_output")
-    write_data(fetch_memberships_output_summary, "fetch_memberships_output_summary")
 
-    write_data(fetch_current_memberships_output, "fetch_current_memberships_output")
-    write_data(fetch_current_memberships_output_summary, "fetch_current_memberships_output_summary")
+    write_data(fetch_memberships_output,
+        "fetch_memberships_output")
+    write_data(fetch_memberships_output_summary,
+        "fetch_memberships_output_summary")
 
-    write_data(fetch_former_memberships_output, "fetch_former_memberships_output")
-    write_data(fetch_former_memberships_output_summary, "fetch_former_memberships_output_summary")
+    write_data(fetch_current_memberships_output,
+        "fetch_current_memberships_output")
+    write_data(fetch_current_memberships_output_summary,
+        "fetch_current_memberships_output_summary")
 
-    write_data(fetch_current_roles_output, "fetch_current_roles_output")
-    write_data(fetch_former_roles_output, "fetch_former_roles_output")
-    write_data(fetch_roles_output, "fetch_roles_output")
+    write_data(fetch_former_memberships_output,
+        "fetch_former_memberships_output")
+    write_data(fetch_former_memberships_output_summary,
+        "fetch_former_memberships_output_summary")
+
+
+    write_data(fetch_memberships_for_member_get,
+               "fetch_memberships_for_member_get")
+    write_data(fetch_current_memberships_for_member_get,
+               "fetch_current_memberships_for_member_get")
+    write_data(fetch_former_memberships_for_member_get,
+               "fetch_former_memberships_for_member_get")
+
+
+    write_data(fetch_memberships_for_member_output,
+        "fetch_memberships_for_member_output")
+    write_data(fetch_memberships_for_member_output_summary,
+        "fetch_memberships_for_member_output_summary")
+
+    write_data(fetch_current_memberships_for_member_output,
+        "fetch_current_memberships_for_member_output")
+    write_data(fetch_current_memberships_for_member_output_summary,
+        "fetch_current_memberships_for_member_output_summary")
+
+    write_data(fetch_former_memberships_for_member_output,
+        "fetch_former_memberships_for_member_output")
+    write_data(fetch_former_memberships_for_member_output_summary,
+        "fetch_former_memberships_for_member_output_summary")
+
+
+    write_data(fetch_roles_output,
+        "fetch_roles_output")
+    write_data(fetch_current_roles_output,
+        "fetch_current_roles_output")
+    write_data(fetch_former_roles_output,
+        "fetch_former_roles_output")
+
+
+    write_data(fetch_roles_for_member_output,
+        "fetch_roles_for_member_output")
+    write_data(fetch_current_roles_for_member_output,
+        "fetch_current_roles_for_member_output")
+    write_data(fetch_former_roles_for_member_output,
+        "fetch_former_roles_for_member_output")
 }
 
 # Fetch all memberships test data ---------------------------------------------

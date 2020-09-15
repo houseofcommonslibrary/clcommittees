@@ -14,6 +14,7 @@
 READ_TEST_DIR <- file.path("data")
 WRITE_TEST_DIR <- file.path("tests", "testthat", "data")
 COMMITTEE_ID <- 176
+MEMBER_ID <- 172
 ENDPOINT_URL <- stringr::str_c(
     "https://committees-api.parliament.uk/committees?",
     "parameters.all=true&",

@@ -22,6 +22,6 @@ returns ALL the roles for this committee (both current and historic) for its
 current and former members. A role without an end date is a current role.
 
 A member may have concurrent roles for the same period reflecting different
-roles e.g. one indicating their service as a member and another their
+positions e.g. one indicating their service as a member and another their
 service as a chair.
 }

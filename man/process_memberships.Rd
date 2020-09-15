@@ -2,7 +2,8 @@
 % Please edit documentation in R/memberships.R
 \name{process_memberships}
 \alias{process_memberships}
-\title{Processes the data returned from a request to the membership endpoints.}
+\title{Processes a tibble returned from \code{request_items} when called with the
+url of either the member or membership endpoint.}
 \usage{
 process_memberships(memberships, summary = TRUE)
 }
@@ -14,6 +15,7 @@ the membership/member endpoint as the url.}
 the full table. The default is TRUE.}
 }
 \description{
-Processes the data returned from a request to the membership endpoints.
+Processes a tibble returned from \code{request_items} when called with the
+url of either the member or membership endpoint.
 }
 \keyword{internal}

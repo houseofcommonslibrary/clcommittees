@@ -12,26 +12,40 @@ url <- stringr::str_c(
     "parameters.all=true&",
     "parameters.currentOnly=false")
 
-fetch_committees_get <- read_data("fetch_committees_get")
+fetch_committees_get <-
+    read_data("fetch_committees_get")
 
-fetch_committees_output <- read_data("fetch_committees_output")
-fetch_committees_output_summary <- read_data("fetch_committees_output_summary")
+fetch_committees_output <-
+    read_data("fetch_committees_output")
+fetch_committees_output_summary <-
+    read_data("fetch_committees_output_summary")
 
-fetch_current_committees_output <- read_data("fetch_current_committees_output")
-fetch_current_committees_output_summary <- read_data("fetch_current_committees_output_summary")
+fetch_current_committees_output <-
+    read_data("fetch_current_committees_output")
+fetch_current_committees_output_summary <-
+    read_data("fetch_current_committees_output_summary")
 
-fetch_former_committees_output <- read_data("fetch_former_committees_output")
-fetch_former_committees_output_summary <- read_data("fetch_former_committees_output_summary")
+fetch_former_committees_output <-
+    read_data("fetch_former_committees_output")
+fetch_former_committees_output_summary <-
+    read_data("fetch_former_committees_output_summary")
 
-fetch_sub_committees_output <- read_data("fetch_sub_committees_output")
-fetch_sub_committees_output_committees <- read_data("fetch_sub_committees_output_committees")
+fetch_sub_committees_output <-
+    read_data("fetch_sub_committees_output")
+fetch_sub_committees_output_committees <-
+    read_data("fetch_sub_committees_output_committees")
 
-fetch_committee_types_output <- read_data("fetch_committee_types_output")
-fetch_committee_types_output_committees <- read_data("fetch_committee_types_output_committees")
+fetch_committee_types_output <-
+    read_data("fetch_committee_types_output")
+fetch_committee_types_output_committees <-
+    read_data("fetch_committee_types_output_committees")
 
-fetch_current_chairs_output <- read_data("fetch_current_chairs_output")
-fetch_current_chairs_output_committees <- read_data("fetch_current_chairs_output_committees")
-fetch_current_chairs_output_summary <- read_data("fetch_current_chairs_output_summary")
+fetch_current_chairs_output <-
+    read_data("fetch_current_chairs_output")
+fetch_current_chairs_output_committees <-
+    read_data("fetch_current_chairs_output_committees")
+fetch_current_chairs_output_summary <-
+    read_data("fetch_current_chairs_output_summary")
 
 # Test fetch_committees -------------------------------------------------------
 

@@ -8,13 +8,13 @@ fetch_current_memberships(committee, summary = TRUE)
 }
 \arguments{
 \item{committee}{An integer representing the id of the committee for which
-to fetch the current members.}
+to fetch the current memberships.}
 
 \item{summary}{A boolean indicating whether to return the summary columns or
 the full table. The default is TRUE.}
 }
 \description{
-\code{fetch_current_members} fetches data on the current members of a given
-committee and returns it as a tibble containing one row per committee
-member.
+\code{fetch_current_memberships} fetches data on the current members of a
+given committee and returns it as a tibble containing one row per committee
+membership.
 }
