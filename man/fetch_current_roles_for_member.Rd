@@ -17,7 +17,7 @@ committee role.
 }
 \details{
 A role indicates a period of service in a given position, so this function
-returns the current roles for this member (both current and historic).
+returns the current roles for this member.
 
 A member may have concurrent roles for the same period reflecting different
 positions e.g. one indicating their service as a member and another their

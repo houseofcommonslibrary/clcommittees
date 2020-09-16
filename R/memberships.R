@@ -39,7 +39,7 @@ process_memberships <- function(memberships, summary = TRUE) {
         dplyr::everything())
 }
 
-# Fetch members functions -----------------------------------------------------
+# Fetch membership functions --------------------------------------------------
 
 #' Fetch data on the current and former members of a committee as a tibble
 #'
@@ -127,7 +127,7 @@ fetch_former_memberships <- function(
     process_memberships(memberships, summary)
 }
 
-# Fetch memberships for functions ---------------------------------------------
+# Fetch memberships for member functions --------------------------------------
 
 #' Fetch data on the current and former committee memberships of a given member
 #'
@@ -364,7 +364,7 @@ fetch_roles_for_member <- function(member) {
 #' committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns the current roles for this member (both current and historic).
+#' returns the current roles for this member.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their
@@ -379,14 +379,14 @@ fetch_current_roles_for_member <- function(member) {
     process_roles(member)
 }
 
-#' Fetch data on the current committee roles of a given member
+#' Fetch data on the former committee roles of a given member
 #'
-#' \code{fetch_former_roles_for_member} fetches data on the current committee
+#' \code{fetch_former_roles_for_member} fetches data on the former committee
 #' roles of a given member and returns it as a tibble containing one row per
 #' committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns the current roles for this member (both current and historic).
+#' returns the former roles for this member.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their

@@ -2,7 +2,7 @@
 % Please edit documentation in R/memberships.R
 \name{fetch_former_roles_for_member}
 \alias{fetch_former_roles_for_member}
-\title{Fetch data on the current committee roles of a given member}
+\title{Fetch data on the former committee roles of a given member}
 \usage{
 fetch_former_roles_for_member(member)
 }
@@ -11,13 +11,13 @@ fetch_former_roles_for_member(member)
 fetch the current roles.}
 }
 \description{
-\code{fetch_former_roles_for_member} fetches data on the current committee
+\code{fetch_former_roles_for_member} fetches data on the former committee
 roles of a given member and returns it as a tibble containing one row per
 committee role.
 }
 \details{
 A role indicates a period of service in a given position, so this function
-returns the current roles for this member (both current and historic).
+returns the former roles for this member.
 
 A member may have concurrent roles for the same period reflecting different
 positions e.g. one indicating their service as a member and another their
