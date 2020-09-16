@@ -4,7 +4,7 @@ clcommittees is an R package for downloading data from the UK Parliament's [Comm
 
 ## Overview
 
-The package provides sets of functions for retrieving data from different endpoints of the Committees API and returning the data as a tibble. The package currently provides functions to download data from the `Committees` and `Committee Membership` endpoints, but new functions may be added to extract data from other endpoints in future. The package does not aim to exhaustively expose every possible API parameter for a given endpoint, but is focussed on downloading key datasets than can be further explored, transformed and combined with other data in R. To help with using parts of the API that are not explicitly covered, the package also provides some lower level functions that allow you to easily retrieve data from any API endpoint URL as a tibble. 
+The package provides sets of functions for retrieving data from different endpoints of the Committees API and returning the data as a tibble. The package currently provides functions to download data from the `Committees` and `Committee Membership` endpoints, but new functions may be added to extract data from other endpoints in future. The package does not aim to exhaustively expose every possible API parameter for a given endpoint, but is focussed on downloading key datasets than can be further explored, transformed and combined with other data in R. To help with using parts of the API that are not explicitly covered, the package also provides some lower level functions that allow you to retrieve data from any API endpoint URL as native R data structures. 
 
 ## Installation
 
