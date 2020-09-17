@@ -408,12 +408,10 @@ fetch_roles_for_member <- function(member) {
 #' @export
 
 fetch_current_roles_for_member <- function(member) {
-    member <- fetch_current_memberships_for_member(member, summary = FALSE)
-    roles <- process_roles(member)
-    if (nrow(roles) > 0) {
-        roles <- roles %>% dplyr::filter(is.na(.data$end_date))
-    }
-    roles
+    memberships <- fetch_current_memberships_for_member(member, summary = FALSE)
+    if (nrow(memberships) == 0) return(tibble::tibble())
+    roles <- process_roles(memberships)
+    roles %>% dplyr::filter(is.na(.data$end_date))
 }
 
 #' Fetch data on the former committee roles of a given member
@@ -434,11 +432,9 @@ fetch_current_roles_for_member <- function(member) {
 #' @export
 
 fetch_former_roles_for_member <- function(member) {
-    member <- fetch_former_memberships_for_member(member, summary = FALSE)
-    roles <- process_roles(member)
-    if (nrow(roles) > 0) {
-        roles <- roles %>% dplyr::filter(! is.na(.data$end_date))
-    }
-    roles
+    memberships <- fetch_former_memberships_for_member(member, summary = FALSE)
+    if (nrow(memberships) == 0) return(tibble::tibble())
+    roles <- process_roles(memberships)
+    roles %>% dplyr::filter(! is.na(.data$end_date))
 }
 
