@@ -150,6 +150,13 @@ test_that("fetch_memberships returns an empty tibble for a non-existent committe
         })
 })
 
+test_that("fetch_memberships throws an error for more than one committee id", {
+    expect_error(
+        fetch_memberships(rep(COMMITTEE_ID, 2)),
+        regexp = "The committee argument must be a single committee id")
+
+})
+
 # Test fetch_current_memberships ----------------------------------------------
 
 test_that("fetch_current_memberships returns expected data", {

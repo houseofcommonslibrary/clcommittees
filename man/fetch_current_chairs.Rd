@@ -11,8 +11,8 @@ fetch_current_chairs(committees = NULL, summary = TRUE)
 which to return chairs. The default is NULL, which returns data on the
 chairs of all committees.}
 
-\item{summary}{A boolean indicating whether to return the summary columns or
-the the full table. The default is TRUE.}
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 \code{fetch_chairs} fetches data on the current chairs of comittees and

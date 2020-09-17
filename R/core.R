@@ -20,7 +20,7 @@ request <- function(url) {
         jsonlite::fromJSON(flatten = TRUE)
 }
 
-#' Get the data items from an API response as a data frame
+#' Get the data items from an API response as a tibble
 #'
 #' @param response The response returned from a call to \code{request}.
 #' @export

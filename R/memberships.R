@@ -7,23 +7,19 @@
 #'
 #' @param memberships A tibble returned from \code{request_items} called with
 #'   the membership/member endpoint as the url.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @keywords internal
 
 process_memberships <- function(memberships, summary = TRUE) {
 
     if (nrow(memberships) == 0) return(memberships)
 
-    # Select only a subset of columns if requested
+    # Remove nested and empty columns if summary is requested
     if (summary == TRUE) {
-        memberships <- memberships %>% dplyr::select(
-            -.data$links,
-            -.data$person,
-            -.data$committee_id_2,
-            -.data$committee_category,
-            -.data$roles,
-            -.data$committee_committee_types)
+        memberships <- memberships %>%
+            dplyr::select_if(function(c) ! is.list(c)) %>%
+            dplyr::select_if(function(c) ! all(is.na(c)))
     }
 
     # Shorten mnis prefix for readability
@@ -39,6 +35,30 @@ process_memberships <- function(memberships, summary = TRUE) {
         dplyr::everything())
 }
 
+#' Check that a committee argument to a membership function returns only one
+#' committee
+#'
+#' @param committee A vector of committee ids that should contain only one id.
+#' @keywords internal
+
+check_committee_arg <- function(committee) {
+    if (length(committee) > 1) {
+        stop("The committee argument must be a single committee id")
+    }
+}
+
+#' Check that a member argument to a membership function returns only one
+#' member
+#'
+#' @param committee A vector of mnis ids that should contain only one id.
+#' @keywords internal
+
+check_member_arg <- function(member) {
+    if (length(member) > 1) {
+        stop("The member argument must be a single mnis id")
+    }
+}
+
 # Fetch membership functions --------------------------------------------------
 
 #' Fetch data on the current and former members of a committee as a tibble
@@ -49,14 +69,15 @@ process_memberships <- function(memberships, summary = TRUE) {
 #'
 #' @param committee An integer representing the id of the committee for which
 #'   to fetch the current and former memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_memberships <- function(
     committee,
     summary = TRUE) {
 
+    check_committee_arg(committee)
     current_members <- fetch_current_memberships(committee, summary)
     full_members <- fetch_former_memberships(committee, summary)
     dplyr::bind_rows(current_members, full_members)
@@ -70,13 +91,15 @@ fetch_memberships <- function(
 #'
 #' @param committee An integer representing the id of the committee for which
 #'   to fetch the current memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_current_memberships <- function(
     committee,
     summary = TRUE) {
+
+    check_committee_arg(committee)
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -103,13 +126,15 @@ fetch_current_memberships <- function(
 #'
 #' @param committee An integer representing the id of the committee for which
 #'   to fetch the former memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_former_memberships <- function(
     committee,
     summary = TRUE) {
+
+    check_committee_arg(committee)
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -137,13 +162,15 @@ fetch_former_memberships <- function(
 #'
 #' @param member An integer representing the mnis_id of the member for which
 #'   to fetch the current and former memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_memberships_for_member <- function(
     member,
     summary = TRUE) {
+
+    check_member_arg(member)
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -163,13 +190,15 @@ fetch_memberships_for_member <- function(
 #'
 #' @param member An integer representing the mnis_id of the member for which
 #'   to fetch the current memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_current_memberships_for_member <- function(
     member,
     summary = TRUE) {
+
+    check_member_arg(member)
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",
@@ -189,13 +218,15 @@ fetch_current_memberships_for_member <- function(
 #'
 #' @param member An integer representing the mnis_id of the member for which
 #'   to fetch the former memberships.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_former_memberships_for_member <- function(
     member,
     summary = TRUE) {
+
+    check_member_arg(member)
 
     url <- stringr::str_glue(stringr::str_c(
         "https://committees-api.parliament.uk/",

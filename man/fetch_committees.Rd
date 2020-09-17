@@ -7,8 +7,8 @@
 fetch_committees(summary = TRUE)
 }
 \arguments{
-\item{summary}{A boolean indicating whether to return the summary columns or
-the the full table. The default is TRUE.}
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 \code{fetch_committees} fetches data on current and former committees and

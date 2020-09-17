@@ -10,8 +10,8 @@ fetch_current_memberships(committee, summary = TRUE)
 \item{committee}{An integer representing the id of the committee for which
 to fetch the current memberships.}
 
-\item{summary}{A boolean indicating whether to return the summary columns or
-the full table. The default is TRUE.}
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 \code{fetch_current_memberships} fetches data on the current members of a

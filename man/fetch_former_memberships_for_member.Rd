@@ -10,8 +10,8 @@ fetch_former_memberships_for_member(member, summary = TRUE)
 \item{member}{An integer representing the mnis_id of the member for which
 to fetch the former memberships.}
 
-\item{summary}{A boolean indicating whether to return the summary columns or
-the full table. The default is TRUE.}
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 \code{fetch_former_memberships_for_member} fetches data on the former

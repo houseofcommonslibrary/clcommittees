@@ -2,7 +2,7 @@
 % Please edit documentation in R/core.R
 \name{get_response_items}
 \alias{get_response_items}
-\title{Get the data items from an API response as a data frame}
+\title{Get the data items from an API response as a tibble}
 \usage{
 get_response_items(response)
 }
@@ -10,5 +10,5 @@ get_response_items(response)
 \item{response}{The response returned from a call to \code{request}.}
 }
 \description{
-Get the data items from an API response as a data frame
+Get the data items from an API response as a tibble
 }

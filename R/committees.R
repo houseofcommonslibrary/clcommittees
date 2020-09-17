@@ -11,8 +11,8 @@
 #' nested and redundant columns. Set \code{summary = FALSE} when calling the
 #' function to retrieve the full data.
 #'
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_committees <- function(summary = TRUE) {
@@ -35,9 +35,12 @@ fetch_committees <- function(summary = TRUE) {
     cm$date_commons_appointed <- as.Date(cm$date_commons_appointed)
     cm$date_lords_appointed <- as.Date(cm$date_lords_appointed)
 
-    # Select only a subset of columns if requested
+    # Remove nested and empty columns if summary is requested
     if (summary == TRUE) {
-        cm <- cm %>% dplyr::select(
+        cm <- cm %>%
+            dplyr::select_if(function(c) ! is.list(c)) %>%
+            dplyr::select_if(function(c) ! all(is.na(c))) %>%
+            dplyr::select(
             .data$committee_id,
             .data$committee_name,
             .data$start_date,
@@ -47,7 +50,8 @@ fetch_committees <- function(summary = TRUE) {
             .data$email,
             .data$phone,
             .data$category_id,
-            .data$category_name)
+            .data$category_name,
+            dplyr::everything())
     }
 
     cm
@@ -63,13 +67,14 @@ fetch_committees <- function(summary = TRUE) {
 #' nested and redundant columns. Set \code{summary = FALSE} when calling the
 #' function to retrieve the full data.
 #'
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_current_committees <- function(summary = TRUE) {
     cm <- fetch_committees(summary = summary)
-    cm <- cm %>% dplyr::filter(is.na(.data$end_date))
+    ccm <- cm %>% dplyr::filter(is.na(.data$end_date))
+    ccm
 }
 
 #' Fetch data on former committees as a tibble
@@ -82,16 +87,17 @@ fetch_current_committees <- function(summary = TRUE) {
 #' nested and redundant columns. Set \code{summary = FALSE} when calling the
 #' function to retrieve the full data.
 #'
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_former_committees <- function(summary = TRUE) {
     cm <- fetch_committees(summary = summary)
-    cm <- cm %>% dplyr::filter(! is.na(.data$end_date))
+    fcm <- cm %>% dplyr::filter(! is.na(.data$end_date))
+    fcm
 }
 
-# Sub-committees ------------------------------------------------------------------
+# Sub-committees --------------------------------------------------------------
 
 #' Fetch data on the subcommittees of parent committees as a tibble
 #'
@@ -178,7 +184,7 @@ fetch_committee_types <- function(committees = NULL) {
     # Fetch the full data on committees
     cm <- fetch_committees(summary = FALSE)
 
-    # Extract the subcommittees table from the list column and bind rows
+    # Extract the committee types table from the list column and bind rows
     ct <- purrr::pmap_df(
         list(
             cm$committee_id,
@@ -232,8 +238,8 @@ fetch_committee_types <- function(committees = NULL) {
 #' @param committees A vector of committee ids specifying the committees for
 #'   which to return chairs. The default is NULL, which returns data on the
 #'   chairs of all committees.
-#' @param summary A boolean indicating whether to return the summary columns or
-#'   the the full table. The default is TRUE.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_current_chairs <- function(
@@ -243,7 +249,7 @@ fetch_current_chairs <- function(
     # Fetch the full data on committees
     cm <- fetch_committees(summary = FALSE)
 
-    # Extract the subcommittees table from the list column and bind rows
+    # Extract the chairs table from the list column and bind rows
     ch <- purrr::map2_df(
         cm$committee_name,
         cm$chairs,
@@ -259,6 +265,8 @@ fetch_current_chairs <- function(
         dplyr::select(
             .data$committee_id,
             .data$committee_name,
+            .data$mnis_person_id,
+            .data$mnis_person_display_name,
             chair_id = .data$id,
             dplyr::everything()) %>%
         tibble::as_tibble()
@@ -266,10 +274,8 @@ fetch_current_chairs <- function(
     # Remove nested and empty columns if summary is requested
     if (summary == TRUE) {
         ch <- ch %>%
-            dplyr::select(
-                -.data$committee,
-                -.data$roles,
-                -.data$person)
+            dplyr::select_if(function(c) ! is.list(c)) %>%
+            dplyr::select_if(function(c) ! all(is.na(c)))
     }
 
     # Shorten mnis prefix for readability

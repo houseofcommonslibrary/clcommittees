@@ -11,8 +11,8 @@ process_memberships(memberships, summary = TRUE)
 \item{memberships}{A tibble returned from \code{request_items} called with
 the membership/member endpoint as the url.}
 
-\item{summary}{A boolean indicating whether to return the summary columns or
-the full table. The default is TRUE.}
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 Processes a tibble returned from \code{request_items} when called with the
