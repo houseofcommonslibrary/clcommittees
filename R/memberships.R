@@ -282,6 +282,8 @@ process_roles <- function(roles) {
             .data$committee_name,
             .data$mnis_id,
             .data$mnis_display_name,
+            .data$role_id,
+            .data$role_name,
             dplyr::everything()) %>%
         tibble::as_tibble()
 
