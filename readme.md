@@ -28,9 +28,9 @@ Functions to download data on committees.
 
 ---
 
-_clcommittees_::__fetch_committees__(_summary = TRUE_)
-_clcommittees_::__fetch_current_committees__(_summary = TRUE_)
-_clcommittees_::__fetch_former_committees__(_summary = TRUE_)
+_clcommittees_::__fetch_committees__(_summary = TRUE_)  
+_clcommittees_::__fetch_current_committees__(_summary = TRUE_)  
+_clcommittees_::__fetch_former_committees__(_summary = TRUE_)  
 
 Fetch data on current and former committees and return it as a tibble containing one row per committee. `fetch_committees` returns data on both the current and former committees, while `fetch_current_committees` and `fetch_former_committees` return the current and former committees respectively. 
 
@@ -38,7 +38,7 @@ The `summary`, argument is a boolean indicating whether to return a summary of k
 
 ---
 
-_clcommittees_::__fetch_sub_committees__(_committees = NULL_)
+_clcommittees_::__fetch_sub_committees__(_committees = NULL_)  
 
 Fetch data on the subcommittees of parent comittees and return it as a tibble containing one row per combination of parent and subcommittee. The data returned for each subcommittee is the data from the `sub_committees` table of its parent committee in the full table returned from the `fetch_committees` functions.
 
@@ -46,7 +46,7 @@ You can optionally use the `committees` argument to provide a vector of committe
 
 ---
 
-_clcommittees_::__fetch_committee_types__(_committees = NULL_)
+_clcommittees_::__fetch_committee_types__(_committees = NULL_)  
 
 Fetch data on the types of comittees and return it as a tibble containing one row per combination of committee and type. The data returned for each type is the data from the `committee_types` table of the committee in the full table returned from the `fetch_committees` functions.
 
@@ -54,7 +54,7 @@ You can optionally use the `committees` argument to provide a vector of committe
 
 ---
 
-_clcommittees_::__fetch_current_chairs__(_committees = NULL_, _summary = TRUE_)
+_clcommittees_::__fetch_current_chairs__(_committees = NULL_, _summary = TRUE_)  
 
 Fetch data on the current chairs of comittees and return it as a tibble containing one row per combination of committee and chair. The data returned for each chair is the data from the `chairs` table of the committee in the full table returned from the `fetch_committees` functions.
 
@@ -70,9 +70,9 @@ Functions to download data on committee memberships.
 
 ---
 
-_clcommittees_::__fetch_memberships__(_committee_, _summary = TRUE_)
-_clcommittees_::__fetch_current_memberships__(_committee_, _summary = TRUE_)
-_clcommittees_::__fetch_former_memberships__(_committee_, _summary = TRUE_)
+_clcommittees_::__fetch_memberships__(_committee_, _summary = TRUE_)  
+_clcommittees_::__fetch_current_memberships__(_committee_, _summary = TRUE_)  
+_clcommittees_::__fetch_former_memberships__(_committee_, _summary = TRUE_)  
 
 Fetch data on the current and former members of a given committee and return it as a tibble containing one row per committee membership. `fetch_memberships` returns data on both the current and former members of the committee, while `fetch_current_memberships` and `fetch_former_memberships` return the current and former members respectively. 
 
@@ -82,9 +82,9 @@ The `summary`, argument is a boolean indicating whether to return a summary of k
 
 ---
 
-_clcommittees_::__fetch_memberships_for_member__(_member_, _summary = TRUE_)
-_clcommittees_::__fetch_current_memberships_for_member___(_member_, _summary = TRUE_)
-_clcommittees_::__fetch_former_memberships_for_member__(_member_, _summary = TRUE_)
+_clcommittees_::__fetch_memberships_for_member__(_member_, _summary = TRUE_)  
+_clcommittees_::__fetch_current_memberships_for_member___(_member_, _summary = TRUE_)  
+_clcommittees_::__fetch_former_memberships_for_member__(_member_, _summary = TRUE_)  
 
 Fetch data on the current and former committee memberships of a given member and return it as a tibble containing one row per committee membership. `fetch_memberships_for_member` returns data on both the current and former memberships of the member, while `fetch_current_memberships_for_member` and `fetch_former_memberships_for_member` return the current and former memberships respectively. 
 
@@ -94,9 +94,9 @@ The `summary`, argument is a boolean indicating whether to return a summary of k
 
 ---
 
-_clcommittees_::__fetch_roles__(_committee_)
-_clcommittees_::__fetch_current_roles__(_committee_)
-_clcommittees_::__fetch_former_roles__(_committee_)
+_clcommittees_::__fetch_roles__(_committee_)  
+_clcommittees_::__fetch_current_roles__(_committee_)  
+_clcommittees_::__fetch_former_roles__(_committee_)  
 
 Fetch data on the roles of the current and former members of a given committee and return it as a tibble containing one row per committee role. `fetch_roles` returns data on the roles of both the current and former members, while `fetch_current_memberships_for_member` and `fetch_former_memberships_for_member` return the roles of current and former members respectively. 
 
@@ -108,9 +108,9 @@ The `committee` argument should be the committee id of a committee.
 
 ---
 
-_clcommittees_::__fetch_roles_for_member__(_member_)
-_clcommittees_::__fetch_current_roles_for_member__(_member_)
-_clcommittees_::__fetch_former_roles_for_member__(_member_)
+_clcommittees_::__fetch_roles_for_member__(_member_)  
+_clcommittees_::__fetch_current_roles_for_member__(_member_)  
+_clcommittees_::__fetch_former_roles_for_member__(_member_)  
 
 Fetch data on the current and former committee roles of a given member and return it as a tibble containing one row per committee role. `fetch_roles_for_member` returns data on the member's current and former roles, while `fetch_current_roles_for_member` and `fetch_former_roles_for_member` return the member's current and former roles respectively.
 
