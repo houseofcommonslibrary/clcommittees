@@ -150,7 +150,7 @@ _clcommittees_::__request_items__(_url_)
 
 Fetch just the data items contained in the response to an API request as a tibble. 
 
-Note that as this function extracts just the data items from the response, you lose any metadata, such as related links and pagination data. The function therefore works best with API requests that return all of the needed data in a single call. In many cases this means you need to use `parameters.all=true` in the request to ensure you get all of the available data. This function is equivalent to first calling `request` and then calling `get_items` on the response, so it cleans the column names in the response.
+Note that as this function extracts just the data items from the response, you lose any metadata, such as related links and pagination data. The function therefore works best with API requests that return all of the data needed in a single call. In many cases this means you need to use `parameters.all=true` in the request to ensure you get all of the available data. This function is equivalent to first calling `request` and then calling `get_items` on the response, so it cleans the column names in the response.
 
 The `url` argument should be a valid API URL.
 
