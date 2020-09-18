@@ -8,7 +8,7 @@ fetch_memberships(committee, summary = TRUE)
 }
 \arguments{
 \item{committee}{An integer representing the id of the committee for which
-to fetch the current and former memberships.}
+to fetch the current and former members.}
 
 \item{summary}{A boolean indicating whether to exclude nested and empty
 columns in the results. The default is TRUE.}

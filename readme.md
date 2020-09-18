@@ -100,7 +100,7 @@ _clcommittees_::__fetch_former_roles__(_committee_)
 
 Fetch data on the roles of the current and former members of a given committee and return it as a tibble containing one row per committee role. `fetch_roles` returns data on the roles of both the current and former members, while `fetch_current_memberships_for_member` and `fetch_former_memberships_for_member` return the roles of current and former members respectively. 
 
-A role indicates a period of service in a given position, so this function returns ALL the roles for this committee (both current and historic) for its current and/or former members. 
+A role indicates a period of service in a given position, so this function returns ALL the roles for this committee (both current and historic) for its current and/or former members. A role without an end date is a current role.
 
 A member may have concurrent roles for the same period reflecting different positions e.g. one indicating their service as a member and another their service as a chair.
 
@@ -113,6 +113,8 @@ _clcommittees_::__fetch_current_roles_for_member__(_member_)
 _clcommittees_::__fetch_former_roles_for_member__(_member_)  
 
 Fetch data on the current and former committee roles of a given member and return it as a tibble containing one row per committee role. `fetch_roles_for_member` returns data on the member's current and former roles, while `fetch_current_roles_for_member` and `fetch_former_roles_for_member` return the member's current and former roles respectively.
+
+A role indicates a period of service in a given position. A role without an end date is a current role.
 
 A member may have concurrent roles for the same period reflecting different positions e.g. one indicating their service as a member and another their service as a chair.
 
@@ -134,7 +136,7 @@ The `url` argument should be a valid API URL.
 
 ---
 
-_clcommittees_::__get_response_items__(_response_)
+_clcommittees_::__get_response_items__(_response_)  
 
 Get the data items from an API response as a tibble.
 
@@ -144,7 +146,7 @@ The `response` argument should be a response object returned from `request`.
 
 ---
 
-_clcommittees_::__request_items__(_url_)
+_clcommittees_::__request_items__(_url_)  
 
 Fetch just the data items contained in the response to an API request as a tibble. 
 

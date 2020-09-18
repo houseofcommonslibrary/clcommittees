@@ -2,17 +2,17 @@
 % Please edit documentation in R/memberships.R
 \name{process_roles}
 \alias{process_roles}
-\title{Processes the full table returned from \code{fetch_members} or
+\title{Processes the full table returned from \code{fetch_membersships} or
 \code{fetch_memberships_for_member} to extract the data on roles.}
 \usage{
 process_roles(roles)
 }
 \arguments{
-\item{roles}{A tibble returned from \code{fetch_members} or
+\item{roles}{A tibble returned from \code{fetch_memberships} or
 \code{fetch_memberships_for_member} called with \code{summary = FALSE}.}
 }
 \description{
-Processes the full table returned from \code{fetch_members} or
+Processes the full table returned from \code{fetch_membersships} or
 \code{fetch_memberships_for_member} to extract the data on roles.
 }
 \keyword{internal}

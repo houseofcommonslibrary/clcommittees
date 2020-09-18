@@ -13,8 +13,6 @@
 
 process_memberships <- function(memberships, summary = TRUE) {
 
-    if (nrow(memberships) == 0) return(memberships)
-
     # Remove nested and empty columns if summary is requested
     if (summary == TRUE) {
         memberships <- memberships %>%
@@ -68,7 +66,7 @@ check_member_arg <- function(member) {
 #' membership.
 #'
 #' @param committee An integer representing the id of the committee for which
-#'   to fetch the current and former memberships.
+#'   to fetch the current and former members.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
@@ -78,9 +76,9 @@ fetch_memberships <- function(
     summary = TRUE) {
 
     check_committee_arg(committee)
-    current_members <- fetch_current_memberships(committee, summary)
-    full_members <- fetch_former_memberships(committee, summary)
-    dplyr::bind_rows(current_members, full_members)
+    current_memberships <- fetch_current_memberships(committee, summary)
+    full_memberships <- fetch_former_memberships(committee, summary)
+    dplyr::bind_rows(current_memberships, full_memberships)
 }
 
 #' Fetch data on the current members of a committee as a tibble
@@ -90,7 +88,7 @@ fetch_memberships <- function(
 #' membership.
 #'
 #' @param committee An integer representing the id of the committee for which
-#'   to fetch the current memberships.
+#'   to fetch the current members.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
@@ -179,6 +177,7 @@ fetch_memberships_for_member <- function(
     ))
 
     memberships <- request_items(url)
+    if (nrow(memberships) == 0) return(memberships)
     process_memberships(memberships, summary)
 }
 
@@ -207,6 +206,7 @@ fetch_current_memberships_for_member <- function(
     ))
 
     memberships <- request_items(url)
+    if (nrow(memberships) == 0) return(memberships)
     process_memberships(memberships, summary)
 }
 
@@ -235,21 +235,20 @@ fetch_former_memberships_for_member <- function(
     ))
 
     memberships <- request_items(url)
+    if (nrow(memberships) == 0) return(memberships)
     process_memberships(memberships, summary)
 }
 
 # General roles functions -----------------------------------------------------
 
-#' Processes the full table returned from \code{fetch_members} or
+#' Processes the full table returned from \code{fetch_membersships} or
 #'   \code{fetch_memberships_for_member} to extract the data on roles.
 #'
-#' @param roles A tibble returned from \code{fetch_members} or
+#' @param roles A tibble returned from \code{fetch_memberships} or
 #'   \code{fetch_memberships_for_member} called with \code{summary = FALSE}.
 #' @keywords internal
 
 process_roles <- function(roles) {
-
-    if (nrow(roles) == 0) return(roles)
 
     roles <- purrr::pmap_df(
         list(
@@ -316,8 +315,9 @@ process_roles <- function(roles) {
 #' @export
 
 fetch_roles <- function(committee) {
-    members <- fetch_memberships(committee, summary = FALSE)
-    process_roles(members)
+    memberships <- fetch_memberships(committee, summary = FALSE)
+    if (nrow(memberships) == 0) return(memberships)
+    process_roles(memberships)
 }
 
 #' Fetch data on the roles of the current members of a committee as a tibble
@@ -339,18 +339,20 @@ fetch_roles <- function(committee) {
 #' @export
 
 fetch_current_roles <- function(committee) {
-    current_members <- fetch_current_memberships(committee, summary = FALSE)
-    process_roles(current_members)
+    memberships <- fetch_current_memberships(committee, summary = FALSE)
+    if (nrow(memberships) == 0) return(memberships)
+    process_roles(memberships)
 }
 
-#' Fetch data on the roles of the former members of a committee as aåtibble
+#' Fetch data on the roles of the former members of a committee as a tibble
 #'
 #' \code{fetch_former_roles} fetches data on the roles of the former members of
 #' a given committee and returns it as a tibble containing one row per
 #' committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns ALL the roles for this committee held by its former members.
+#' returns ALL the roles for this committee for its former members. A role
+#' without an end date is a current role.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their
@@ -361,8 +363,9 @@ fetch_current_roles <- function(committee) {
 #' @export
 
 fetch_former_roles <- function(committee) {
-    former_members <- fetch_former_memberships(committee, summary = FALSE)
-    process_roles(former_members)
+    memberships <- fetch_former_memberships(committee, summary = FALSE)
+    if (nrow(memberships) == 0) return(memberships)
+    process_roles(memberships)
 }
 
 # Fetch roles for member functions ---------------------------------------------------
@@ -374,8 +377,8 @@ fetch_former_roles <- function(committee) {
 #' row per committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns ALL the roles for this member (both current and historic). A role
-#' without an end date is a current role.
+#' returns the member's current and former roles. A role without an end date is
+#' a current role.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their
@@ -386,8 +389,9 @@ fetch_former_roles <- function(committee) {
 #' @export
 
 fetch_roles_for_member <- function(member) {
-    member <- fetch_memberships_for_member(member, summary = FALSE)
-    process_roles(member)
+    memberships <- fetch_memberships_for_member(member, summary = FALSE)
+    if (nrow(memberships) == 0) return(memberships)
+    process_roles(memberships)
 }
 
 #' Fetch data on the current committee roles of a given member
@@ -397,7 +401,8 @@ fetch_roles_for_member <- function(member) {
 #' committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns the current roles for this member.
+#' returns the member's the current roles. A role without an end date is a
+#' current role.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their
@@ -409,7 +414,7 @@ fetch_roles_for_member <- function(member) {
 
 fetch_current_roles_for_member <- function(member) {
     memberships <- fetch_current_memberships_for_member(member, summary = FALSE)
-    if (nrow(memberships) == 0) return(tibble::tibble())
+    if (nrow(memberships) == 0) return(memberships)
     roles <- process_roles(memberships)
     roles %>% dplyr::filter(is.na(.data$end_date))
 }
@@ -421,7 +426,8 @@ fetch_current_roles_for_member <- function(member) {
 #' committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
-#' returns the former roles for this member.
+#' returns the member's the former roles. A role without an end date is a
+#' current role.
 #'
 #' A member may have concurrent roles for the same period reflecting different
 #' positions e.g. one indicating their service as a member and another their
@@ -433,7 +439,7 @@ fetch_current_roles_for_member <- function(member) {
 
 fetch_former_roles_for_member <- function(member) {
     memberships <- fetch_former_memberships_for_member(member, summary = FALSE)
-    if (nrow(memberships) == 0) return(tibble::tibble())
+    if (nrow(memberships) == 0) return(memberships)
     roles <- process_roles(memberships)
     roles %>% dplyr::filter(! is.na(.data$end_date))
 }

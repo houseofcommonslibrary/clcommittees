@@ -17,8 +17,8 @@ row per committee role.
 }
 \details{
 A role indicates a period of service in a given position, so this function
-returns ALL the roles for this member (both current and historic). A role
-without an end date is a current role.
+returns the member's current and former roles. A role without an end date is
+a current role.
 
 A member may have concurrent roles for the same period reflecting different
 positions e.g. one indicating their service as a member and another their

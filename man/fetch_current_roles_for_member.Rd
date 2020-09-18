@@ -17,7 +17,8 @@ committee role.
 }
 \details{
 A role indicates a period of service in a given position, so this function
-returns the current roles for this member.
+returns the member's the current roles. A role without an end date is a
+current role.
 
 A member may have concurrent roles for the same period reflecting different
 positions e.g. one indicating their service as a member and another their
