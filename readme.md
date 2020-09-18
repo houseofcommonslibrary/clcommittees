@@ -19,7 +19,7 @@ remotes::install_github("houseofcommonslibrary/clcommittees")
 
 * [Committees](https://github.com/houseofcommonslibrary/clcommittees#committees)
 * [Committee Memberships](https://github.com/houseofcommonslibrary/clcommittees#committee-memberships)
-* [Requests](https://github.com/houseofcommonslibrary/clcommittees#committees)
+* [Requests](https://github.com/houseofcommonslibrary/clcommittees#requests)
 
 
 ## Committees
