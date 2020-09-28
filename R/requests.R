@@ -1,4 +1,4 @@
-### Core functions for fetching and processing data
+### Request functions for fetching and processing data
 
 #' Send a request to API and return the response as a named list
 #'
