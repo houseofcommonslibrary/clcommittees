@@ -11,7 +11,7 @@ Authors@R:
 Description: This package provides a collection of functions for downloading
     data from the different endpoints of the UK Parliament's Committees 
     Information System API. The package currently focusses on the Committees
-    and Committee Membership endopints. It also provides a lower level API
+    and Committee Membership endpoints. It also provides a lower level API
     that makes it easy to retreive data from any Committees API URL as a 
     tibble of tidy data.
 License: BSD_3_clause + file LICENSE
