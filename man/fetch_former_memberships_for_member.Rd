@@ -2,7 +2,7 @@
 % Please edit documentation in R/memberships.R
 \name{fetch_former_memberships_for_member}
 \alias{fetch_former_memberships_for_member}
-\title{Fetch data on the current committee memberships of a given member}
+\title{Fetch data on the former committee memberships of a given member}
 \usage{
 fetch_former_memberships_for_member(member, summary = TRUE)
 }

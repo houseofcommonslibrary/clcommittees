@@ -210,7 +210,7 @@ fetch_current_memberships_for_member <- function(
     process_memberships(memberships, summary)
 }
 
-#' Fetch data on the current committee memberships of a given member
+#' Fetch data on the former committee memberships of a given member
 #'
 #' \code{fetch_former_memberships_for_member} fetches data on the former
 #' committee memberships of a given member and returns it as a tibble
