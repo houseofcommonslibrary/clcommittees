@@ -25,6 +25,7 @@ remotes::install_github("houseofcommonslibrary/clcommittees")
 
 * [Committees](https://github.com/houseofcommonslibrary/clcommittees#committees)
 * [Committee Memberships](https://github.com/houseofcommonslibrary/clcommittees#committee-memberships)
+* [Committee Roles](https://github.com/houseofcommonslibrary/clcommittees#committee-roles)
 * [Requests](https://github.com/houseofcommonslibrary/clcommittees#requests)
 
 
@@ -99,6 +100,12 @@ Fetch data on the current and former committee memberships of a given member and
 The `member_id` argument should be the mnis id of a member.
 
 The `summary`, argument is a boolean indicating whether to return a summary of key data or the full tibble. Setting `summary` to `TRUE` removes list columns and empty columns from the result.
+
+---
+
+## Committee Roles
+
+Functions to download data on Members' roles on committees.
 
 ---
 
