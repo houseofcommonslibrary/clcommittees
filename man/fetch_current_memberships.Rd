@@ -4,14 +4,17 @@
 \alias{fetch_current_memberships}
 \title{Fetch data on the current members of a committee as a tibble}
 \usage{
-fetch_current_memberships(committee, summary = TRUE)
+fetch_current_memberships(committee_id, summary = TRUE, fetch_name = TRUE)
 }
 \arguments{
-\item{committee}{An integer representing the id of the committee for which
-to fetch the current members.}
+\item{committee_id}{An integer representing the id of the committee for
+which to fetch the current members.}
 
 \item{summary}{A boolean indicating whether to exclude nested and empty
 columns in the results. The default is TRUE.}
+
+\item{fetch_name}{A boolean indicating whether to add the committee name
+by making an extra call to the API. The default is TRUE.}
 }
 \description{
 \code{fetch_current_memberships} fetches data on the current members of a

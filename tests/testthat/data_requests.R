@@ -1,4 +1,4 @@
-### Record and retrieve test data: core functions
+### Record and retrieve test data: request functions
 
 # About -----------------------------------------------------------------------
 
@@ -16,14 +16,14 @@
 
 source("tests/testthat/data.R")
 
-# Fetch test data for core functions ------------------------------------------
+# Fetch test data for request functions ---------------------------------------
 
-fetch_core_data <- function() {
+fetch_request_data <- function() {
 
-    url <- stringr::str_c(
-        "https://committees-api.parliament.uk/committees?",
-        "parameters.all=true&",
-        "parameters.currentOnly=false")
+    url <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees?Take={PARAMETER_TAKE_THRESHOLD}",
+        "&CommitteeStatus=All"))
 
     request_get <- httr::GET(url)
     request_output <- request(url)
@@ -38,5 +38,5 @@ fetch_core_data <- function() {
 
 # Fetch all core test data ----------------------------------------------------
 
-fetch_core_data()
-message("API output recorded for core")
+fetch_request_data()
+message("API output recorded for requests")

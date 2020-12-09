@@ -4,10 +4,10 @@
 \alias{fetch_memberships_for_member}
 \title{Fetch data on the current and former committee memberships of a given member}
 \usage{
-fetch_memberships_for_member(member, summary = TRUE)
+fetch_memberships_for_member(member_id, summary = TRUE)
 }
 \arguments{
-\item{member}{An integer representing the mnis_id of the member for which
+\item{member_id}{An integer representing the mnis_id of the member for which
 to fetch the current and former memberships.}
 
 \item{summary}{A boolean indicating whether to exclude nested and empty

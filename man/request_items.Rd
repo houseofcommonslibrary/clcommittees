@@ -10,9 +10,6 @@ request_items(url)
 \item{url}{The full API URL specifying the endpoint and request parameters.}
 }
 \description{
-\code{request_items} makes an API call to the given endpoint, extracts
-the data items from the response as a tibble, and cleans the column names.
-Do not use this function if you need to access any of the other properties
-of the response object; call \code{request} and \code{get_response_items}
-separately.
+\code{request_items} makes an API call to the given endpoint, converts the
+response to a tibble, and cleans the column names.
 }

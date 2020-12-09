@@ -1,5 +1,5 @@
-### Test core functions
-context("Core functions")
+### Test request functions
+context("Request functions")
 
 # Imports ---------------------------------------------------------------------
 
@@ -7,10 +7,10 @@ source("data.R")
 
 # Setup -----------------------------------------------------------------------
 
-url <- stringr::str_c(
-    "https://committees-api.parliament.uk/committees?",
-    "parameters.all=true&",
-    "parameters.currentOnly=false")
+url <- stringr::str_glue(stringr::str_c(
+    API_BASE_URL,
+    "Committees?Take={PARAMETER_TAKE_THRESHOLD}",
+    "&CommitteeStatus=All"))
 
 request_get <- read_data("request_get")
 request_output <- read_data("request_output")

@@ -20,37 +20,44 @@ source("tests/testthat/data.R")
 
 fetch_memberships_data <- function() {
 
+    url <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees/{COMMITTEE_ID}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=All"))
+
     url_current <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/{COMMITTEE_ID}/membership/current?",
-        "parameters.all=true"
-    ))
+        API_BASE_URL,
+        "Committees/{COMMITTEE_ID}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Current"))
 
     url_former <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/{COMMITTEE_ID}/membership/former?",
-        "parameters.all=true"
-    ))
+        API_BASE_URL,
+        "Committees/{COMMITTEE_ID}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Former"))
 
     url_for_member <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.members={MEMBER_ID}"
-    ))
+        API_BASE_URL,
+        "Members?Members={MEMBER_ID}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}"))
 
     url_current_for_member <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.former=false&parameters.members={MEMBER_ID}"
-    ))
+        API_BASE_URL,
+        "Members?Members={MEMBER_ID}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Current"))
 
     url_former_for_member <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.former=true&parameters.members={MEMBER_ID}"
-    ))
+        API_BASE_URL,
+        "Members?Members={MEMBER_ID}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Former"))
 
     # Fetch data
+    fetch_memberships_get <-
+        httr::GET(url)
     fetch_current_memberships_get <-
         httr::GET(url_current)
     fetch_former_memberships_get <-
@@ -93,12 +100,12 @@ fetch_memberships_data <- function() {
     fetch_former_memberships_for_member_output_summary <-
         fetch_former_memberships_for_member(MEMBER_ID, summary = FALSE)
 
-    fetch_roles_output <-
-        fetch_roles(COMMITTEE_ID)
-    fetch_current_roles_output <-
-        fetch_current_roles(COMMITTEE_ID)
-    fetch_former_roles_output <-
-        fetch_former_roles(COMMITTEE_ID)
+    fetch_member_roles_output <-
+        fetch_member_roles(COMMITTEE_ID)
+    fetch_current_member_roles_output <-
+        fetch_current_member_roles(COMMITTEE_ID)
+    fetch_former_member_roles_output <-
+        fetch_former_member_roles(COMMITTEE_ID)
 
     fetch_roles_for_member_output <-
         fetch_roles_for_member(MEMBER_ID)
@@ -108,11 +115,12 @@ fetch_memberships_data <- function() {
         fetch_former_roles_for_member(MEMBER_ID)
 
     # Write data
+    write_data(fetch_memberships_get,
+        "fetch_memberships_get")
     write_data(fetch_current_memberships_get,
         "fetch_current_memberships_get")
     write_data(fetch_former_memberships_get,
         "fetch_former_memberships_get")
-
 
     write_data(fetch_memberships_output,
         "fetch_memberships_output")
@@ -129,14 +137,12 @@ fetch_memberships_data <- function() {
     write_data(fetch_former_memberships_output_summary,
         "fetch_former_memberships_output_summary")
 
-
     write_data(fetch_memberships_for_member_get,
                "fetch_memberships_for_member_get")
     write_data(fetch_current_memberships_for_member_get,
                "fetch_current_memberships_for_member_get")
     write_data(fetch_former_memberships_for_member_get,
                "fetch_former_memberships_for_member_get")
-
 
     write_data(fetch_memberships_for_member_output,
         "fetch_memberships_for_member_output")
@@ -153,14 +159,12 @@ fetch_memberships_data <- function() {
     write_data(fetch_former_memberships_for_member_output_summary,
         "fetch_former_memberships_for_member_output_summary")
 
-
-    write_data(fetch_roles_output,
-        "fetch_roles_output")
-    write_data(fetch_current_roles_output,
-        "fetch_current_roles_output")
-    write_data(fetch_former_roles_output,
-        "fetch_former_roles_output")
-
+    write_data(fetch_member_roles_output,
+        "fetch_member_roles_output")
+    write_data(fetch_current_member_roles_output,
+        "fetch_current_member_roles_output")
+    write_data(fetch_former_member_roles_output,
+        "fetch_former_member_roles_output")
 
     write_data(fetch_roles_for_member_output,
         "fetch_roles_for_member_output")

@@ -1,63 +1,83 @@
 ### Functions for fetching data from the committee membership endpoints
 
-# General membership functions ------------------------------------------------
-
-#' Processes a tibble returned from \code{request_items} when called with the
-#' url of either the member or membership endpoint.
-#'
-#' @param memberships A tibble returned from \code{request_items} called with
-#'   the membership/member endpoint as the url.
-#' @param summary A boolean indicating whether to exclude nested and empty
-#'   columns in the results. The default is TRUE.
-#' @keywords internal
-
-process_memberships <- function(memberships, summary = TRUE) {
-
-    # Remove nested and empty columns if summary is requested
-    if (summary == TRUE) {
-        memberships <- memberships %>%
-            dplyr::select_if(function(c) ! is.list(c)) %>%
-            dplyr::select_if(function(c) ! all(is.na(c)))
-    }
-
-    # Shorten mnis prefix for readability
-    colnames(memberships) <- stringr::str_replace(
-        colnames(memberships), "mnis_person", "mnis")
-
-    # Reorder columns for readability
-    memberships %>% dplyr::select(
-        .data$committee_id,
-        .data$committee_name,
-        .data$mnis_id,
-        .data$mnis_display_name,
-        dplyr::everything())
-}
+# Fetch membership functions --------------------------------------------------
 
 #' Check that a committee argument to a membership function returns only one
 #' committee
 #'
-#' @param committee A vector of committee ids that should contain only one id.
+#' @param committee_id A single committee id.
 #' @keywords internal
 
-check_committee_arg <- function(committee) {
-    if (length(committee) > 1) {
-        stop("The committee argument must be a single committee id")
+check_committee_id <- function(committee_id) {
+    if (length(committee_id) > 1) {
+        stop("The committee_id argument must be a single committee id")
     }
 }
 
-#' Check that a member argument to a membership function returns only one
-#' member
+#' Fetch data on members of a given committee as a tibble using a Members
+#' endpoint URL
 #'
-#' @param committee A vector of mnis ids that should contain only one id.
+#' \code{fetch_memberships_from_url} fetches data on the members of a given
+#' committee from a Members endpoint URL and returns it as a tibble containing
+#' one row per committee membership. This internal function allows generic
+#' handling of requests for this data to the Members endpoint with different
+#' URL parameters.
+#'
+#' @param committee_id An integer representing the id of the committee for
+#'   which to fetch members.
+#' @param url A valid URL requesting data for the given committee id from the
+#'   Memberships endpoint.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
+#' @param fetch_name A boolean indicating whether to add the committee name
+#'   by making an extra call to the API. The default is TRUE.
 #' @keywords internal
 
-check_member_arg <- function(member) {
-    if (length(member) > 1) {
-        stop("The member argument must be a single mnis id")
-    }
-}
+fetch_memberships_from_url <- function(
+    committee_id,
+    url,
+    summary = TRUE,
+    fetch_name = TRUE) {
 
-# Fetch membership functions --------------------------------------------------
+    # Get the memberships for this url
+    ms <- request_items(url)
+    if (nrow(ms) == 0) return(ms)
+
+    # Set committee name to unknown by default
+    committee_name <- NA
+
+    # Fetch committee name if requested
+    if (fetch_name == TRUE) {
+        cm <- fetch_committees()
+        cm <- cm[cm$committee_id == committee_id, ]
+        committee_name <- cm$committee_name[1]
+    }
+
+    # Shorten mnis prefix for readability
+    colnames(ms) <- stringr::str_replace(
+        colnames(ms), "member_info_", "")
+
+    # Reorder columns for readability
+    ms <- ms %>%
+        dplyr::mutate(
+            committee_id = committee_id,
+            committee_name = committee_name) %>%
+        dplyr::select(
+            .data$committee_id,
+            .data$committee_name,
+            .data$mnis_id,
+            .data$display_as,
+            dplyr::everything())
+
+    # Remove nested and empty columns if summary is requested
+    if (summary == TRUE) {
+        ms <- ms %>%
+            dplyr::select_if(function(c) ! is.list(c)) %>%
+            dplyr::select_if(function(c) ! all(is.na(c)))
+    }
+
+    ms
+}
 
 #' Fetch data on the current and former members of a committee as a tibble
 #'
@@ -65,20 +85,33 @@ check_member_arg <- function(member) {
 #' given committee and returns it as a tibble containing one row per committee
 #' membership.
 #'
-#' @param committee An integer representing the id of the committee for which
-#'   to fetch the current and former members.
+#' @param committee_id An integer representing the id of the committee for
+#'   which to fetch the current and former members.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
+#' @param fetch_name A boolean indicating whether to add the committee name
+#'   by making an extra call to the API. The default is TRUE.
 #' @export
 
 fetch_memberships <- function(
-    committee,
-    summary = TRUE) {
+    committee_id,
+    summary = TRUE,
+    fetch_name = TRUE) {
 
-    check_committee_arg(committee)
-    current_memberships <- fetch_current_memberships(committee, summary)
-    full_memberships <- fetch_former_memberships(committee, summary)
-    dplyr::bind_rows(current_memberships, full_memberships)
+    check_committee_id(committee_id)
+    if (committee_id < 1) return(tibble::tibble())
+
+    url <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees/{format_ids(committee_id)}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=All"))
+
+    fetch_memberships_from_url(
+        committee_id,
+        url,
+        summary = summary,
+        fetch_name = fetch_name)
 }
 
 #' Fetch data on the current members of a committee as a tibble
@@ -87,33 +120,33 @@ fetch_memberships <- function(
 #' given committee and returns it as a tibble containing one row per committee
 #' membership.
 #'
-#' @param committee An integer representing the id of the committee for which
-#'   to fetch the current members.
+#' @param committee_id An integer representing the id of the committee for
+#'   which to fetch the current members.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
+#' @param fetch_name A boolean indicating whether to add the committee name
+#'   by making an extra call to the API. The default is TRUE.
 #' @export
 
 fetch_current_memberships <- function(
-    committee,
-    summary = TRUE) {
+    committee_id,
+    summary = TRUE,
+    fetch_name = TRUE) {
 
-    check_committee_arg(committee)
+    check_committee_id(committee_id)
+    if (committee_id < 1) return(tibble::tibble())
 
     url <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/{committee}/membership/current?",
-        "parameters.all=true"
-    ))
+        API_BASE_URL,
+        "Committees/{format_ids(committee_id)}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Current"))
 
-    memberships <- request_items(url)
-    if (nrow(memberships) == 0) return(memberships)
-
-    memberships <-  memberships %>%
-        # Rename the id and name columns to be informative
-        dplyr::rename(membership_id = .data$id)
-
-    process_memberships(memberships, summary)
-
+    fetch_memberships_from_url(
+        committee_id,
+        url,
+        summary = summary,
+        fetch_name = fetch_name)
 }
 
 #' Fetch data on the former members of a committee as a tibble
@@ -122,35 +155,126 @@ fetch_current_memberships <- function(
 #' given committee and returns it as a tibble containing one row per committee
 #' membership.
 #'
-#' @param committee An integer representing the id of the committee for which
-#'   to fetch the former memberships.
+#' @param committee_id An integer representing the id of the committee for
+#'   which to fetch the former memberships.
+#' @param summary A boolean indicating whether to exclude nested and empty
+#'   columns in the results. The default is TRUE.
+#' @param fetch_name A boolean indicating whether to add the committee name
+#'   by making an extra call to the API. The default is TRUE.
+#' @export
+
+fetch_former_memberships <- function(
+    committee_id,
+    summary = TRUE,
+    fetch_name = TRUE) {
+
+    check_committee_id(committee_id)
+    if (committee_id < 1) return(tibble::tibble())
+
+    url <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees/{format_ids(committee_id)}/Members?",
+        "Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Former"))
+
+    fetch_memberships_from_url(
+        committee_id,
+        url,
+        summary = summary,
+        fetch_name = fetch_name)
+}
+
+# Fetch memberships for member functions --------------------------------------
+
+#' Check that a member_id argument to a membership function returns only one
+#' member
+#'
+#' @param member_id A single mnis_id.
+#' @keywords internal
+
+check_member_id <- function(member_id) {
+    if (length(member_id) > 1) {
+        stop("The member_id argument must be a single mnis id")
+    }
+}
+
+#' Fetch data on the committee memberships of a given member as a tibble using
+#' a Members endpoint URL
+#'
+#' \code{fetch_memberships_for_member_from_url} fetches data on the committee
+#' memberships of a given member from a Members endpoint URL and returns it as
+#' a tibble containing one row per committee membership. This internal function
+#' allows generic handling of requests for this data to the Members endpoint
+#' with different URL parameters.
+#'
+#' @param url A valid URL requesting data for the given member id from the
+#'   Members endpoint.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
 
-fetch_former_memberships <- function(
-    committee,
-    summary = TRUE) {
+fetch_memberships_for_member_from_url <- function(url, summary = TRUE) {
 
-    check_committee_arg(committee)
+    # Get the table for the member
+    member <- request(url) %>%
+        tibble::as_tibble() %>%
+        janitor::clean_names()
 
-    url <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/{committee}/membership/former?",
-        "parameters.all=true"
-    ))
+    if (nrow(member) == 0) return(member)
 
-    memberships <- request_items(url)
-    if (nrow(memberships) == 0) return(memberships)
+    # Extract the nested committees table for the member
+    committees <- member$committees[[1]] %>%
+        tibble::as_tibble() %>%
+        janitor::clean_names() %>%
+        dplyr::rename(
+            committee_id = .data$id,
+            committee_name = .data$name)
 
-    memberships <-  memberships %>%
-        # Rename the id and name columns to be informative
-        dplyr::rename(membership_id = .data$id)
+    # Organise the member table and remove redundant data
+    member <- member %>%  dplyr::select(
+        mnis_id = .data$member_info_mnis_id,
+        person_id = .data$person_id,
+        name = .data$name,
+        photo_url = .data$photo_url,
+        dplyr::everything()) %>%
+        dplyr::select(-c(.data$id, .data$committees))
 
-    process_memberships(memberships, summary)
+    # Shorten mnis prefix for readability
+    colnames(member) <- stringr::str_replace(
+        colnames(member), "member_info_", "")
+
+    # Combine member and committee data into a single table
+    memberships <- committees %>% dplyr::mutate(
+        mnis_id = member$mnis_id,
+        person_id = member$person_id,
+        name = member$name,
+        photo_url = member$photo_url,
+        member_from = member$member_from,
+        party = member$party,
+        party_colour = member$party_colour,
+        is_chair = member$is_chair,
+        list_as = member$list_as,
+        display_as = member$display_as,
+        full_title = member$full_title,
+        address_as = member$address_as,
+        house = member$house,
+        is_current = member$is_current) %>%
+        dplyr::select(
+            .data$committee_id,
+            .data$committee_name,
+            .data$mnis_id,
+            .data$display_as,
+            dplyr::everything())
+
+    # Remove nested and empty columns if summary is requested
+    if (summary == TRUE) {
+        memberships <- memberships %>%
+            dplyr::select_if(function(c) ! is.list(c)) %>%
+            dplyr::select_if(function(c) ! all(is.na(c)))
+    }
+
+    memberships
 }
-
-# Fetch memberships for member functions --------------------------------------
 
 #' Fetch data on the current and former committee memberships of a given member
 #'
@@ -158,27 +282,23 @@ fetch_former_memberships <- function(
 #' committee memberships of a given member and returns it as a tibble
 #' containing one row per committee membership.
 #'
-#' @param member An integer representing the mnis_id of the member for which
+#' @param member_id An integer representing the mnis_id of the member for which
 #'   to fetch the current and former memberships.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
 
-fetch_memberships_for_member <- function(
-    member,
-    summary = TRUE) {
+fetch_memberships_for_member <- function(member_id, summary = TRUE) {
 
-    check_member_arg(member)
+    check_member_id(member_id)
+    if (member_id < 1) return(tibble::tibble())
 
     url <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.members={member}"
-    ))
+        API_BASE_URL,
+        "Members?Members={format_ids(member_id)}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}"))
 
-    memberships <- request_items(url)
-    if (nrow(memberships) == 0) return(memberships)
-    process_memberships(memberships, summary)
+    fetch_memberships_for_member_from_url(url, summary = summary)
 }
 
 #' Fetch data on the current committee memberships of a given member
@@ -187,27 +307,25 @@ fetch_memberships_for_member <- function(
 #' committee memberships of a given member and returns it as a tibble
 #' containing one row per committee membership.
 #'
-#' @param member An integer representing the mnis_id of the member for which
+#' @param member_id An integer representing the mnis_id of the member for which
 #'   to fetch the current memberships.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
 
 fetch_current_memberships_for_member <- function(
-    member,
-    summary = TRUE) {
+    member_id, summary = TRUE) {
 
-    check_member_arg(member)
+    check_member_id(member_id)
+    if (member_id < 1) return(tibble::tibble())
 
     url <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.former=false&parameters.members={member}"
-    ))
+        API_BASE_URL,
+        "Members?Members={format_ids(member_id)}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Current"))
 
-    memberships <- request_items(url)
-    if (nrow(memberships) == 0) return(memberships)
-    process_memberships(memberships, summary)
+    fetch_memberships_for_member_from_url(url, summary = summary)
 }
 
 #' Fetch data on the former committee memberships of a given member
@@ -216,32 +334,29 @@ fetch_current_memberships_for_member <- function(
 #' committee memberships of a given member and returns it as a tibble
 #' containing one row per committee membership.
 #'
-#' @param member An integer representing the mnis_id of the member for which
+#' @param member_id An integer representing the mnis_id of the member for which
 #'   to fetch the former memberships.
 #' @param summary A boolean indicating whether to exclude nested and empty
 #'   columns in the results. The default is TRUE.
 #' @export
 
-fetch_former_memberships_for_member <- function(
-    member,
-    summary = TRUE) {
+fetch_former_memberships_for_member <- function(member_id, summary = TRUE) {
 
-    check_member_arg(member)
+    check_member_id(member_id)
+    if (member_id < 1) return(tibble::tibble())
 
     url <- stringr::str_glue(stringr::str_c(
-        "https://committees-api.parliament.uk/",
-        "committees/membership/member?",
-        "parameters.former=true&parameters.members={member}"
-    ))
+        API_BASE_URL,
+        "Members?Members={format_ids(member_id)}",
+        "&Take={PARAMETER_TAKE_THRESHOLD}",
+        "&MembershipStatus=Former"))
 
-    memberships <- request_items(url)
-    if (nrow(memberships) == 0) return(memberships)
-    process_memberships(memberships, summary)
+    fetch_memberships_for_member_from_url(url, summary = summary)
 }
 
 # General roles functions -----------------------------------------------------
 
-#' Processes the full table returned from \code{fetch_membersships} or
+#' Processes the full table returned from \code{fetch_memberships} or
 #'   \code{fetch_memberships_for_member} to extract the data on roles.
 #'
 #' @param roles A tibble returned from \code{fetch_memberships} or
@@ -255,13 +370,13 @@ process_roles <- function(roles) {
             roles$committee_id,
             roles$committee_name,
             roles$mnis_id,
-            roles$mnis_display_name,
+            roles$display_as,
             roles$roles),
         function(
             committee_id,
             committee_name,
             mnis_id,
-            mnis_display_name,
+            display_as,
             roles) {
 
             if (ncol(roles) > 0) {
@@ -269,7 +384,7 @@ process_roles <- function(roles) {
                     committee_id = committee_id,
                     committee_name = committee_name,
                     mnis_id = mnis_id,
-                    mnis_display_name)
+                    display_as)
             }
         })
 
@@ -280,7 +395,7 @@ process_roles <- function(roles) {
             .data$committee_id,
             .data$committee_name,
             .data$mnis_id,
-            .data$mnis_display_name,
+            .data$display_as,
             .data$role_id,
             .data$role_name,
             dplyr::everything()) %>%
@@ -298,9 +413,9 @@ process_roles <- function(roles) {
 #' Fetch data on the roles of the current and former members of a committee as
 #' a tibble
 #'
-#' \code{fetch_roles} fetches data on the roles of the current and former
-#' members of a given committee and returns it as a tibble containing one row
-#' per committee role.
+#' \code{fetch_member_roles} fetches data on the roles of the current and
+#' former members of a given committee and returns it as a tibble containing
+#' one row per committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
 #' returns ALL the roles for this committee (both current and historic) for its
@@ -314,7 +429,7 @@ process_roles <- function(roles) {
 #'   to fetch the roles for the former members.
 #' @export
 
-fetch_roles <- function(committee) {
+fetch_member_roles <- function(committee) {
     memberships <- fetch_memberships(committee, summary = FALSE)
     if (nrow(memberships) == 0) return(memberships)
     process_roles(memberships)
@@ -322,9 +437,9 @@ fetch_roles <- function(committee) {
 
 #' Fetch data on the roles of the current members of a committee as a tibble
 #'
-#' \code{fetch_curent_roles} fetches data on the roles of the current members
-#' of a given committee and returns it as a tibble containing one row per
-#' committee role.
+#' \code{fetch_curent_member_roles} fetches data on the roles of the current
+#' members of a given committee and returns it as a tibble containing one row
+#' per committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
 #' returns ALL the roles for this committee (both current and historic) for its
@@ -338,7 +453,7 @@ fetch_roles <- function(committee) {
 #'   to fetch the roles for the current members.
 #' @export
 
-fetch_current_roles <- function(committee) {
+fetch_current_member_roles <- function(committee) {
     memberships <- fetch_current_memberships(committee, summary = FALSE)
     if (nrow(memberships) == 0) return(memberships)
     process_roles(memberships)
@@ -346,9 +461,9 @@ fetch_current_roles <- function(committee) {
 
 #' Fetch data on the roles of the former members of a committee as a tibble
 #'
-#' \code{fetch_former_roles} fetches data on the roles of the former members of
-#' a given committee and returns it as a tibble containing one row per
-#' committee role.
+#' \code{fetch_former_member_roles} fetches data on the roles of the former
+#' members of a given committee and returns it as a tibble containing one row
+#' per committee role.
 #'
 #' A role indicates a period of service in a given position, so this function
 #' returns ALL the roles for this committee for its former members. A role
@@ -362,13 +477,13 @@ fetch_current_roles <- function(committee) {
 #'   to fetch the roles for the former members.
 #' @export
 
-fetch_former_roles <- function(committee) {
+fetch_former_member_roles <- function(committee) {
     memberships <- fetch_former_memberships(committee, summary = FALSE)
     if (nrow(memberships) == 0) return(memberships)
     process_roles(memberships)
 }
 
-# Fetch roles for member functions ---------------------------------------------------
+# Fetch roles for member functions --------------------------------------------
 
 #' Fetch data on the current and former committee roles of a given member
 #'
@@ -413,7 +528,7 @@ fetch_roles_for_member <- function(member) {
 #' @export
 
 fetch_current_roles_for_member <- function(member) {
-    memberships <- fetch_current_memberships_for_member(member, summary = FALSE)
+    memberships <- fetch_memberships_for_member(member, summary = FALSE)
     if (nrow(memberships) == 0) return(memberships)
     roles <- process_roles(memberships)
     roles %>% dplyr::filter(is.na(.data$end_date))
@@ -438,9 +553,8 @@ fetch_current_roles_for_member <- function(member) {
 #' @export
 
 fetch_former_roles_for_member <- function(member) {
-    memberships <- fetch_former_memberships_for_member(member, summary = FALSE)
+    memberships <- fetch_memberships_for_member(member, summary = FALSE)
     if (nrow(memberships) == 0) return(memberships)
     roles <- process_roles(memberships)
     roles %>% dplyr::filter(! is.na(.data$end_date))
 }
-

@@ -8,14 +8,15 @@ fetch_committee_types(committees = NULL)
 }
 \arguments{
 \item{committees}{A vector of committee ids specifying the committees for
-which to return chairs. The default is NULL, which returns data on the
-chairs of all committees.}
+which to return types. The default is NULL, which returns data on the
+types of all committees.}
 }
 \description{
-\code{fetch_types} fetches data on the types of comittees and returns it as
-a tibble containing one row per combination of committee and tyoe. The data
-returned for each type is the data from the committee_types table of each
-committee in the full table returned from \code{fetch_committees}.
+\code{fetch_committee_types} fetches data on the types of comittees and
+returns it as a tibble containing one row per combination of committee and
+type. The data returned for each type is the data from the committee_types
+table of each committee in the full table returned from
+\code{fetch_committees}.
 }
 \details{
 You can optionally use the \code{committees} argument to provide a vector of

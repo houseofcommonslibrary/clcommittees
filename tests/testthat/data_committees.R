@@ -20,14 +20,30 @@ source("tests/testthat/data.R")
 
 fetch_committees_data <- function() {
 
-    url <- stringr::str_c(
-        "https://committees-api.parliament.uk/committees?",
-        "parameters.all=true&",
-        "parameters.currentOnly=false")
+    url <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees?Take={PARAMETER_TAKE_THRESHOLD}",
+        "&CommitteeStatus=All"))
+
+    url_current <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees?Take={PARAMETER_TAKE_THRESHOLD}",
+        "&CommitteeStatus=Current"))
+
+    url_former <- stringr::str_glue(stringr::str_c(
+        API_BASE_URL,
+        "Committees?Take={PARAMETER_TAKE_THRESHOLD}",
+        "&CommitteeStatus=Former"))
 
     # Fetch data
     fetch_committees_get <-
         httr::GET(url)
+
+    fetch_committees_get_current <-
+        httr::GET(url_current)
+
+    fetch_committees_get_former <-
+        httr::GET(url_former)
 
     fetch_committees_output <-
         fetch_committees()
@@ -54,16 +70,13 @@ fetch_committees_data <- function() {
     fetch_committee_types_output_committees <-
         fetch_committee_types(committees = COMMITTEE_ID)
 
-    fetch_current_chairs_output <-
-        fetch_current_chairs()
-    fetch_current_chairs_output_committees <-
-        fetch_current_chairs(committees = COMMITTEE_ID)
-    fetch_current_chairs_output_summary <-
-        fetch_current_chairs(summary = FALSE)
-
     # Write data
     write_data(fetch_committees_get,
         "fetch_committees_get")
+    write_data(fetch_committees_get_current,
+        "fetch_committees_get_current")
+    write_data(fetch_committees_get_former,
+        "fetch_committees_get_former")
 
     write_data(fetch_committees_output,
         "fetch_committees_output")
@@ -89,13 +102,6 @@ fetch_committees_data <- function() {
         "fetch_committee_types_output")
     write_data(fetch_committee_types_output_committees,
         "fetch_committee_types_output_committees")
-
-    write_data(fetch_current_chairs_output,
-        "fetch_current_chairs_output")
-    write_data(fetch_current_chairs_output_committees,
-        "fetch_current_chairs_output_committees")
-    write_data(fetch_current_chairs_output_summary,
-        "fetch_current_chairs_output_summary")
 }
 
 # Fetch all committees test data ----------------------------------------------

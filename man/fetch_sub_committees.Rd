@@ -4,12 +4,15 @@
 \alias{fetch_sub_committees}
 \title{Fetch data on the subcommittees of parent committees as a tibble}
 \usage{
-fetch_sub_committees(committees = NULL)
+fetch_sub_committees(committees = NULL, summary = TRUE)
 }
 \arguments{
 \item{committees}{A vector of committee ids specifying the parent committees
 for which to return any subcommittees. The default is NULL, which returns
 data on subcommittees for all parent committees.}
+
+\item{summary}{A boolean indicating whether to exclude nested and empty
+columns in the results. The default is TRUE.}
 }
 \description{
 \code{fetch_sub_committees} fetches data on the subcommittees of parent
@@ -27,4 +30,8 @@ results of \code{fetch_sub_committees} to filter the results of
 You can optionally use the \code{committees} argument to provide a vector of
 committee ids and the function will return just the subcommittees of the
 given parent committees.
+
+By default this function returns a subset of the columns and ignores any
+nested and redundant columns. Set \code{summary = FALSE} when calling the
+function to retrieve the full data.
 }

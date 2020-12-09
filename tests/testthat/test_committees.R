@@ -7,13 +7,14 @@ source("data.R")
 
 # Setup -----------------------------------------------------------------------
 
-url <- stringr::str_c(
-    "https://committees-api.parliament.uk/committees?",
-    "parameters.all=true&",
-    "parameters.currentOnly=false")
-
 fetch_committees_get <-
     read_data("fetch_committees_get")
+
+fetch_committees_get_current <-
+    read_data("fetch_committees_get_current")
+
+fetch_committees_get_former <-
+    read_data("fetch_committees_get_former")
 
 fetch_committees_output <-
     read_data("fetch_committees_output")
@@ -39,13 +40,6 @@ fetch_committee_types_output <-
     read_data("fetch_committee_types_output")
 fetch_committee_types_output_committees <-
     read_data("fetch_committee_types_output_committees")
-
-fetch_current_chairs_output <-
-    read_data("fetch_current_chairs_output")
-fetch_current_chairs_output_committees <-
-    read_data("fetch_current_chairs_output_committees")
-fetch_current_chairs_output_summary <-
-    read_data("fetch_current_chairs_output_summary")
 
 # Test fetch_committees -------------------------------------------------------
 
@@ -75,7 +69,7 @@ test_that("fetch_committees returns the full table", {
 
 test_that("fetch_current_committees returns expected data", {
     with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
+        "httr::GET" = get_mock_get(fetch_committees_get_current), {
             expected <- fetch_current_committees_output
             observed <- fetch_current_committees()
             expect_identical(observed, expected)
@@ -84,9 +78,9 @@ test_that("fetch_current_committees returns expected data", {
         })
 })
 
-test_that("fetch_committees returns the full table", {
+test_that("fetch_current_committees returns the full table", {
     with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
+        "httr::GET" = get_mock_get(fetch_committees_get_current), {
             expected <- fetch_current_committees_output_summary
             observed <- fetch_current_committees(summary = FALSE)
             expect_identical(observed, expected)
@@ -97,22 +91,22 @@ test_that("fetch_committees returns the full table", {
 
 # Test fetch_former_committees ------------------------------------------------
 
-test_that("fetch_current_committees returns expected data", {
+test_that("fetch_former_committees returns expected data", {
     with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
-            expected <- fetch_current_committees_output
-            observed <- fetch_current_committees()
+        "httr::GET" = get_mock_get(fetch_committees_get_former), {
+            expected <- fetch_former_committees_output
+            observed <- fetch_former_committees()
             expect_identical(observed, expected)
             expect_s3_class(observed$start_date, "Date")
             expect_s3_class(observed$end_date, "Date")
         })
 })
 
-test_that("fetch_committees returns the full table", {
+test_that("fetch_former_committees returns the full table", {
     with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
-            expected <- fetch_current_committees_output_summary
-            observed <- fetch_current_committees(summary = FALSE)
+        "httr::GET" = get_mock_get(fetch_committees_get_former), {
+            expected <- fetch_former_committees_output_summary
+            observed <- fetch_former_committees(summary = FALSE)
             expect_identical(observed, expected)
             expect_s3_class(observed$date_commons_appointed, "Date")
             expect_s3_class(observed$date_lords_appointed, "Date")
@@ -154,35 +148,6 @@ test_that("fetch_committee_types returns data for expected committees", {
         "httr::GET" = get_mock_get(fetch_committees_get), {
             expected <- fetch_committee_types_output_committees
             observed <- fetch_committee_types(committees = COMMITTEE_ID)
-            expect_identical(observed, expected)
-        })
-})
-
-# Test fetch_current_chairs ---------------------------------------------------
-
-test_that("fetch_current_chairs returns expected data", {
-    with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
-            expected <- fetch_current_chairs_output
-            observed <- fetch_current_chairs()
-            expect_identical(observed, expected)
-        })
-})
-
-test_that("fetch_current_chairs returns data for expected committees", {
-    with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
-            expected <- fetch_current_chairs_output_committees
-            observed <- fetch_current_chairs(committees = COMMITTEE_ID)
-            expect_identical(observed, expected)
-        })
-})
-
-test_that("fetch_current_chairs returns the full table", {
-    with_mock(
-        "httr::GET" = get_mock_get(fetch_committees_get), {
-            expected <- fetch_current_chairs_output_summary
-            observed <- fetch_current_chairs(summary = FALSE)
             expect_identical(observed, expected)
         })
 })
